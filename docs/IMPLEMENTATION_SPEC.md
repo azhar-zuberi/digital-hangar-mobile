@@ -308,6 +308,8 @@ Proposed starting values — flag these for visual design validation before lock
 
 **AI provider** — Claude API (Haiku-tier for cost, upgradeable to Sonnet if retrieval quality needs it) for the aircraft-scoped assistant described in TDD §11. Structured retrieval: pull the aircraft's recent `timeline_entries`, `squawks`, `reminders`, `flights` as context, no vector database for MVP (per TDD §11.3).
 
+**Rate limiting (added — not in original scope)** — no document before this addition specified a per-user cap on assistant queries. Before Phase 6 ships, add one (e.g., a daily query cap per aircraft, enforced in the Edge Function before it calls the Claude API) — without it, a single owner can run up unbounded API cost with no product benefit. This should become an explicit acceptance criterion on whichever issue implements the assistant, not an afterthought.
+
 **Push notifications** — `expo-notifications` for delivery. A Supabase Edge Function on a scheduled trigger (Supabase Cron) checks `reminders` for upcoming `due_date` values daily and sends via the Expo Push API. This closes the gap in TDD §8.7 — nothing previously triggered reminder delivery.
 
 **State management / data fetching** — TanStack Query (React Query) paired with the Supabase client for all server state (aircraft, timeline, squawks, flights); local UI state via React state/Context. No Redux — consistent with the TDD's "avoid unnecessary complexity" principle (§2.1).

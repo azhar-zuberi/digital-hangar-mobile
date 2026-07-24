@@ -40,6 +40,13 @@ Aircraft logbook/pilot logbook replacement, flight planning, aircraft marketplac
 - Branching: `main`, `develop`, feature branches.
 - TypeScript throughout.
 
+## Guardrails
+
+- **Cost:** subagents are model-tiered in their frontmatter — `product-owner` and `project-manager` run on Haiku (structured, bureaucratic tasks), `senior-engineer` runs on Sonnet (actual implementation). Don't upgrade PO/PM to a stronger model without a reason; that's where cost creeps in unnecessarily.
+- **Destructive commands:** `.claude/settings.json` denies `rm -rf`, `git push --force`, `git reset --hard`, branch deletion, and `gh repo delete` outright, and requires confirmation on `git push`, `rm`, and Supabase migration/reset commands. This is a best-effort client-side layer, not the authoritative one — GitHub branch protection on `main`/`develop` (require PR review, block force-push, block deletion) is the real backstop and should be enabled in repo settings directly, since client-side permission rules have had reported reliability gaps.
+- **Secrets:** this is a private repo, so GitHub's free secret-scanning push protection doesn't apply (that's public-repo-only unless you're on GitHub Advanced Security). The backstop here is `.github/workflows/gitleaks.yml`, which scans every push and PR. Never write real credentials into tracked files — `.env` is gitignored; reference `process.env.*`.
+- **Production AI cost (future, not yet built):** none of the docs currently specify per-user rate limiting on the AI assistant feature (Phase 6). Before that ships, add a cap — a single owner shouldn't be able to run up unbounded Claude API cost by spamming the assistant. Flag this when Phase 6 gets broken into issues.
+
 ## Docs Index
 
 - `docs/PRD.md` — Product Requirements (v0.1)

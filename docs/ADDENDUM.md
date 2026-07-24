@@ -114,4 +114,26 @@ And one new feature folder: `features/flights`, alongside the existing `features
 
 ---
 
+## D. OAuth Identity Linking (Apple / Google Dedup)
+
+### The gap
+
+Neither the PRD nor the TDD specifies what happens if the same person signs in with Apple once and Google another time, using the same email. Since `public.users.id` maps 1:1 to `auth.users.id`, an unhandled case risks creating two separate app profiles ("ghost" accounts) for one person — one of them possibly aircraft-less and orphaned.
+
+### Decision
+
+**Rely on Supabase Auth's built-in automatic identity linking — no custom merge/dedup logic for v1.**
+
+When two OAuth providers report the same *verified* email address, Supabase links both identities to a single `auth.users` row automatically. In the common case (Apple and Google both return a verified email), this means one identity, one `public.users` row, one profile — with zero extra application code. No merge UI, no blocking error, no manual account-linking flow.
+
+### Known limitation (accepted for v1)
+
+If a user chooses Apple's "Hide My Email" relay, Apple issues a private relay address instead of their real email, which won't match their Google email — so automatic linking won't trigger, and that user ends up with two separate profiles. This is accepted as a documented edge case, not solved in v1: it's rare, non-destructive (no data loss — at worst, two aircraft-less accounts), and building account-merge UX for it now would be scope creep against "calm over complexity." Revisit only if it proves to be a real-world support burden post-launch.
+
+### Status
+
+Resolved — no custom dedup logic in scope for issue #4 or Phase 1.
+
+---
+
 *Ready to update the PRD/TDD directly and move into Phase 1 implementation.*
