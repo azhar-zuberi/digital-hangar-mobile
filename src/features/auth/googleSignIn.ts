@@ -12,11 +12,11 @@ GoogleSignin.configure({
   webClientId: '437508253809-b7bnf1sm7e2u44allc1sac7uia9ol5jk.apps.googleusercontent.com',
 });
 
-// --- Known deviation from the issue #4 spec — flagging rather than hiding it ---
+// --- No nonce on the Google path — accepted v1 tradeoff, not an oversight ---
 //
-// The issue asks for a client-generated nonce, hashed and passed to the
-// *native* Google sign-in call, mirroring the Apple flow (see nonce.ts). That
-// is not possible with the free/public version of
+// Issue #4 originally asked for a client-generated nonce, hashed and passed
+// to the *native* Google sign-in call, mirroring the Apple flow (nonce.ts).
+// That isn't possible with the free/public version of
 // @react-native-google-signin/google-signin (the version installed here,
 // 16.x): neither `GoogleSignin.configure()`'s `ConfigureParams` nor
 // `GoogleSignin.signIn()`'s `SignInParams` expose a nonce field on iOS —
@@ -28,12 +28,16 @@ GoogleSignin.configure({
 // free-library + Supabase combination (e.g.
 // react-native-google-signin/google-signin#1176).
 //
-// Practical effect: as shipped, the call below sends no nonce, so it will
-// only succeed while Supabase's Google provider has "Skip nonce checks" ON.
-// That setting was deliberately left OFF this session. This PR does not flip
-// it — that's a security-relevant call for a human to make, not something to
-// change silently mid-implementation. See the PR description for the options
-// this leaves open.
+// Decision (made after flagging the conflict rather than resolving it
+// silently): Supabase's Google provider now has "Skip nonce checks" ON, so
+// the call below intentionally sends no nonce — there's nothing dead or
+// half-wired here, this is the whole flow for Google. The ID token is still
+// fully verified against Google's public keys either way; "Skip nonce
+// checks" only turns off replay-nonce verification, not signature/issuer
+// verification. This is a documented, accepted v1 limitation, same spirit as
+// the Apple private-relay-email edge case in docs/ADDENDUM.md §D — not
+// something to revisit without a reason. Apple's provider is unaffected and
+// keeps full nonce enforcement (see appleSignIn.ts / nonce.ts).
 export async function signInWithGoogle(): Promise<'success' | 'cancelled'> {
   await GoogleSignin.hasPlayServices();
 
