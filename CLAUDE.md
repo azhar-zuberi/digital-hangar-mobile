@@ -39,6 +39,7 @@ Aircraft logbook/pilot logbook replacement, flight planning, aircraft marketplac
 - Project structure follows `docs/TDD.md` §5 (`app/`, `components/`, `features/`, `services/`, `hooks/`, `models/`, `utils/`).
 - Branching: `main`, `develop`, feature branches.
 - TypeScript throughout.
+- **Verification before a PR is type-check + lint + automated tests passing — not a simulator boot.** senior-engineer does not wait on an iOS simulator/native build to self-verify before opening a PR; that's slow and not its job. PRs note whether a change is checkable via `expo start --web` (most UI) or needs manual device verification (native-only: Apple/Google sign-in, camera, push notifications). Simulator/device-level verification is a human call for now, and the QA agent's job once it exists.
 
 ## Guardrails
 
