@@ -104,7 +104,7 @@ Follow these steps once, locally:
 
    ```bash
    supabase login
-   supabase link --project-id aocmjvqsdrdftubpxrnk
+   supabase link --project-ref aocmjvqsdrdftubpxrnk
    ```
 
 5. **Apply migrations.** All schema changes live under `supabase/migrations/` as plain SQL
