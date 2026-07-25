@@ -16,6 +16,7 @@
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
+    "@expo/env": "^2.4.2",
     "@types/react": "~19.2.2",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.0",
@@ -31,6 +32,8 @@
     "lint": "expo lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:types": "supabase gen types typescript --project-id aocmjvqsdrdftubpxrnk --schema public > src/models/database.types.ts",
+    "db:smoke-test": "node scripts/smoke-test-supabase.js"
   }
 }
