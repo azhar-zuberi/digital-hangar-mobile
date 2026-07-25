@@ -1,14 +1,17 @@
 {
   "expo": {
     "name": "Digital Hangar",
-    "slug": "digital-hangar-mobile",
+    "slug": "digital-hangar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.digitalhangar.app"
+      "bundleIdentifier": "com.digitalhangar.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +31,21 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.437508253809-h4qnagpj8t7n5h0kkuaec1bpejd3u8i9"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "03e3f9e8-303a-4333-b41a-2f7dd088afd8"
+      }
+    },
+    "owner": "azuberi"
   }
 }
