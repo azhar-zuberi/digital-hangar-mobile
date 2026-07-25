@@ -1,6 +1,7 @@
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../models/database.types';
 
 // Values come from the environment, never hardcoded — see .env.example.
 // EXPO_PUBLIC_* vars are inlined at build time by Expo, which is safe here
@@ -17,7 +18,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-export const supabase = createClient(supabaseUrl ?? '', supabaseAnonKey ?? '', {
+// Typed against src/models/database.types.ts (generated via `npm run db:types`
+// once linked to the live project — see issue #2 / README "Local Supabase setup").
+export const supabase = createClient<Database>(supabaseUrl ?? '', supabaseAnonKey ?? '', {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,

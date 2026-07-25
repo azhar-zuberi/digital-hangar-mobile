@@ -76,6 +76,70 @@ These protections are configured in GitHub's UI/API, not in this repo's code, so
 be verified by reading a file here — confirm them in Settings → Branches after this PR merges
 if they aren't already on.
 
+## Local Supabase setup for a new developer
+
+Every feature that touches data depends on a linked Supabase project and a typed client.
+Follow these steps once, locally:
+
+1. **Get a Supabase project.** For the shared Development environment, ask to be added as a
+   collaborator on the existing project (ref `aocmjvqsdrdftubpxrnk`). To stand up your own
+   throwaway project instead, create one at [supabase.com](https://supabase.com) and swap the
+   project ref below for yours.
+
+2. **Install the Supabase CLI** (not a project dependency — install however you prefer, e.g.
+   `brew install supabase/tap/supabase`).
+
+3. **Fill in `.env`:**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Fill in `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` from the Supabase
+   dashboard (Project Settings → API). Never commit `.env` — it's gitignored, and both values
+   are read at build time via `process.env.EXPO_PUBLIC_*` (Expo's built-in env inlining, no
+   extra `app.config.ts` plumbing needed).
+
+4. **Authenticate and link the CLI to the project:**
+
+   ```bash
+   supabase login
+   supabase link --project-ref aocmjvqsdrdftubpxrnk
+   ```
+
+5. **Apply migrations.** All schema changes live under `supabase/migrations/` as plain SQL
+   files, applied in filename (timestamp) order:
+
+   ```bash
+   supabase db push
+   ```
+
+   This currently applies just the smoke-test table from issue #2
+   (`_health_check`) — the real domain schema (users, aircraft, timeline entries, squawks,
+   reminders, communities, flights) lands via later issues (#5, #6, #18, ...).
+
+6. **Regenerate the typed client** from the live schema:
+
+   ```bash
+   npm run db:types
+   ```
+
+   This overwrites `src/models/database.types.ts` with the Supabase CLI's real output. Do this
+   any time the schema changes.
+
+7. **Run the smoke test** to confirm the app can actually reach the database through the anon
+   key and RLS:
+
+   ```bash
+   npm run db:smoke-test
+   ```
+
+   It queries `_health_check` and prints the seed row on success. If it fails, the most likely
+   cause is step 5 not having been run yet (or `.env` pointing at the wrong project).
+
+The typed client itself lives at `src/services/supabaseClient.ts` and is used everywhere data
+is fetched (TanStack Query + this client — see `docs/ADDENDUM.md` §4).
+
 ## Secrets
 
 Never commit real credentials. `.env` is gitignored; copy `.env.example` and fill in your

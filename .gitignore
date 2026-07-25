@@ -36,6 +36,9 @@ android/app/build/
 .env
 .env.*.local
 
+# Supabase CLI local state
+supabase/.temp/
+
 # Metro
 .metro-health-check*
 

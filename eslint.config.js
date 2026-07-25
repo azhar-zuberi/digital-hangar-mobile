@@ -9,4 +9,20 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*'],
   },
+  {
+    // Standalone Node scripts (e.g. scripts/smoke-test-supabase.js) run outside
+    // Metro/RN and use CommonJS + Node globals — mirrors the existing
+    // metro.config.js override in eslint-config-expo.
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'writable',
+        process: 'readonly',
+        __dirname: 'readonly',
+        console: 'readonly',
+      },
+    },
+  },
 ]);
