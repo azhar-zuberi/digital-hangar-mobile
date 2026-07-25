@@ -37,7 +37,8 @@ Aircraft logbook/pilot logbook replacement, flight planning, aircraft marketplac
 ## Repo Conventions
 
 - Project structure follows `docs/TDD.md` §5 (`app/`, `components/`, `features/`, `services/`, `hooks/`, `models/`, `utils/`).
-- Branching: `main`, `develop`, feature branches.
+- Branching: `main`, `develop`, feature branches. Feature PRs merge into `develop`, one issue per branch/PR.
+- **`develop` → `main` merges happen in batches at phase boundaries**, not per-issue (current batch: end of Phase 1 Foundations, all 13 issues). Because of this, GitHub's `Closes #N` won't auto-close issues on a develop-merge — it only fires on a default-branch (`main`) merge. **Close each issue manually** (with a comment pointing to the merged PR) as soon as its PR lands in `develop`; don't wait for the batch merge to main. Treat "closed on GitHub" as "done in develop," and the eventual main merge as a separate release event.
 - TypeScript throughout.
 - **Verification before a PR is type-check + lint + automated tests passing — not a simulator boot.** senior-engineer does not wait on an iOS simulator/native build to self-verify before opening a PR; that's slow and not its job. PRs note whether a change is checkable via `expo start --web` (most UI) or needs manual device verification (native-only: Apple/Google sign-in, camera, push notifications). Simulator/device-level verification is a human call for now, and the QA agent's job once it exists.
 
