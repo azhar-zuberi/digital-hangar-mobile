@@ -1,21 +1,26 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useSession } from '../features/auth/session';
 import { queryClient } from '../services/queryClient';
 import { colors } from '../utils/tokens';
-import { HomeScreen } from './screens/HomeScreen';
+import { RootNavigator } from './navigation/RootNavigator';
 import { SignInScreen } from './screens/SignInScreen';
 
-// Root component. Real tab navigation (Story / Care / Fly) is added in a
-// later Phase 1 issue — for now this wires up app-wide providers (TanStack
-// Query for server state, per IMPLEMENTATION_SPEC.md §4) and gates between
-// the sign-in screen (issues #3/#4) and the placeholder Home screen based on
+// Root component. Wires up app-wide providers — TanStack Query for server
+// state (IMPLEMENTATION_SPEC.md §4) and react-native-safe-area-context for
+// the nav shell (issue #10) — and gates between the sign-in screen
+// (issues #3/#4) and the Home / Story / Care / Fly nav shell based on
 // whether a Supabase Auth session exists.
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RootGate />
+      <SafeAreaProvider>
+        <RootGate />
+        <StatusBar style="dark" />
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }
@@ -31,7 +36,7 @@ function RootGate() {
     );
   }
 
-  return session ? <HomeScreen /> : <SignInScreen />;
+  return session ? <RootNavigator /> : <SignInScreen />;
 }
 
 const styles = StyleSheet.create({

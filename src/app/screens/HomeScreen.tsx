@@ -1,18 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { signOut } from '../../features/auth/signOut';
-import { colors, spacing, typography } from '../../utils/tokens';
+import { colors, radii, spacing, typography } from '../../utils/tokens';
+import type { RootStackParamList } from '../navigation/types';
 
-// Placeholder screen for issue #1 (project scaffold). Real navigation
-// (Story / Care / Fly tabs) and the "Add My Aircraft" gate land in later
-// Phase 1 issues per ADDENDUM.md §C.
+// Placeholder for Home ("My Digital Hangar") — real content (hero photo,
+// ownership snapshot, recent hangar activity per IMPLEMENTATION_SPEC.md §2)
+// is out of scope for issue #10, which only needs Home reachable as the
+// entry point above the Story/Care/Fly tab navigator. The "no aircraft yet
+// → onboarding" gate is separate, later scope (#11).
 //
 // The "Sign out" link here is a stand-in for issue #3/#4's sign-out
 // requirement. Its real home is Profile/Settings (IMPLEMENTATION_SPEC.md
 // §2), which doesn't exist yet — this is the smallest way to make sign-out
 // reachable now without building that screen early.
-export function HomeScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+export function HomeScreen({ navigation }: Props) {
   const handleSignOut = () => {
     // Best-effort: signOut() clears the local Supabase session either way,
     // so there's nothing actionable to surface if the network call fails.
@@ -23,10 +28,12 @@ export function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Digital Hangar</Text>
       <Text style={styles.subtitle}>Your aircraft&apos;s digital home is on its way.</Text>
+      <Pressable onPress={() => navigation.navigate('Hangar')} style={styles.enter}>
+        <Text style={styles.enterText}>Enter the Hangar</Text>
+      </Pressable>
       <Pressable onPress={handleSignOut} style={styles.signOut}>
         <Text style={styles.signOutText}>Sign out</Text>
       </Pressable>
-      <StatusBar style="dark" />
     </View>
   );
 }
@@ -50,8 +57,20 @@ const styles = StyleSheet.create({
     color: colors.graphite60,
     textAlign: 'center',
   },
-  signOut: {
+  enter: {
     marginTop: spacing.xxl,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radii.control,
+    backgroundColor: colors.brass,
+  },
+  enterText: {
+    fontSize: typography.body.size,
+    fontWeight: '600',
+    color: colors.ivory,
+  },
+  signOut: {
+    marginTop: spacing.xl,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
