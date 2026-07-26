@@ -114,9 +114,10 @@ Follow these steps once, locally:
    supabase db push
    ```
 
-   This currently applies just the smoke-test table from issue #2
-   (`_health_check`) — the real domain schema (users, aircraft, timeline entries, squawks,
-   reminders, communities, flights) lands via later issues (#5, #6, #18, ...).
+   This currently applies the smoke-test table from issue #2 (`_health_check`) and the
+   `users` table + `public_profiles` view from issue #5 — the rest of the domain schema
+   (aircraft, timeline entries, squawks, reminders, communities, flights) lands via later
+   issues (#6, #18, ...).
 
 6. **Regenerate the typed client** from the live schema:
 
