@@ -1,6 +1,5 @@
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { useSocialSignIn } from '../../features/auth/useSocialSignIn';
@@ -57,8 +56,6 @@ export function SignInScreen() {
           </View>
         )}
       </View>
-
-      <StatusBar style="dark" />
     </View>
   );
 }
