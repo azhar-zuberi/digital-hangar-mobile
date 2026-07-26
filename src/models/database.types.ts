@@ -26,6 +26,127 @@ export type Database = {
         };
         Relationships: [];
       };
+      aircraft: {
+        Row: {
+          created_at: string;
+          engine_information: string | null;
+          home_airport: string | null;
+          id: string;
+          manufacturer: string;
+          model: string;
+          nickname: string | null;
+          primary_photo_url: string | null;
+          registration: string;
+          serial_number: string | null;
+          updated_at: string;
+          visibility: string;
+          year: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          engine_information?: string | null;
+          home_airport?: string | null;
+          id?: string;
+          manufacturer: string;
+          model: string;
+          nickname?: string | null;
+          primary_photo_url?: string | null;
+          registration: string;
+          serial_number?: string | null;
+          updated_at?: string;
+          visibility?: string;
+          year?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          engine_information?: string | null;
+          home_airport?: string | null;
+          id?: string;
+          manufacturer?: string;
+          model?: string;
+          nickname?: string | null;
+          primary_photo_url?: string | null;
+          registration?: string;
+          serial_number?: string | null;
+          updated_at?: string;
+          visibility?: string;
+          year?: number | null;
+        };
+        Relationships: [];
+      };
+      aircraft_memberships: {
+        Row: {
+          aircraft_id: string;
+          created_at: string;
+          id: string;
+          relationship: string;
+          user_id: string;
+          verified: boolean;
+        };
+        Insert: {
+          aircraft_id: string;
+          created_at?: string;
+          id?: string;
+          relationship: string;
+          user_id: string;
+          verified?: boolean;
+        };
+        Update: {
+          aircraft_id?: string;
+          created_at?: string;
+          id?: string;
+          relationship?: string;
+          user_id?: string;
+          verified?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'aircraft_memberships_aircraft_id_fkey';
+            columns: ['aircraft_id'];
+            isOneToOne: false;
+            referencedRelation: 'aircraft';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'aircraft_memberships_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'public_profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'aircraft_memberships_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      communities: {
+        Row: {
+          created_at: string;
+          id: string;
+          manufacturer: string;
+          model: string;
+          name: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          manufacturer: string;
+          model: string;
+          name: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          manufacturer?: string;
+          model?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
       users: {
         Row: {
           created_at: string;
@@ -72,7 +193,22 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      aircraft_has_no_members: {
+        Args: { target_aircraft_id: string };
+        Returns: boolean;
+      };
+      can_view_aircraft: {
+        Args: { target_aircraft_id: string };
+        Returns: boolean;
+      };
+      is_aircraft_member: {
+        Args: { target_aircraft_id: string };
+        Returns: boolean;
+      };
+      is_verified_owner: {
+        Args: { target_aircraft_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       [_ in never]: never;
