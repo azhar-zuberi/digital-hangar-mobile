@@ -48,6 +48,20 @@ npm run typecheck        # tsc --noEmit
 iOS is the MVP target platform (`docs/TDD.md` §4.1, §20); Android/web are not actively
 supported yet, though the architecture doesn't preclude them later.
 
+### Previewing the signed-in app on web
+
+Apple and Google sign-in have no web implementation (Apple's button is iOS-only; Google's
+free-tier SDK renders a no-op stub on web), so `npm run web` normally can't get past the
+sign-in screen. For local UI development only, skip the auth gate with:
+
+```bash
+EXPO_PUBLIC_SKIP_AUTH=1 npm run web
+```
+
+This only takes effect in a dev build (`__DEV__`) — it's inert in any production build
+regardless of env configuration. Set `EXPO_PUBLIC_SKIP_AUTH=1` in your local `.env` instead
+of the command line if you want it on by default; either way, never commit it as `1`.
+
 ## Branching & workflow
 
 Per `docs/TDD.md` §18:

@@ -25,8 +25,18 @@ export default function App() {
   );
 }
 
+// Dev-only escape hatch so the post-sign-in app (nav shell, future screens)
+// can be previewed on `expo start --web`, where Apple/Google sign-in have no
+// web implementation (see google_signin_free_tier_limits memory). Gated on
+// __DEV__ so it can never be true in a production build, regardless of env.
+const SKIP_AUTH_FOR_DEV = __DEV__ && process.env.EXPO_PUBLIC_SKIP_AUTH === '1';
+
 function RootGate() {
   const { data: session, isLoading } = useSession();
+
+  if (SKIP_AUTH_FOR_DEV) {
+    return <RootNavigator />;
+  }
 
   if (isLoading) {
     return (
