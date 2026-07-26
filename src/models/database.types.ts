@@ -209,6 +209,10 @@ export type Database = {
         Args: { target_aircraft_id: string };
         Returns: boolean;
       };
+      storage_first_path_uuid: {
+        Args: { object_name: string };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;

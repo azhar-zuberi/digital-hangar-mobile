@@ -129,10 +129,11 @@ Follow these steps once, locally:
    ```
 
    This currently applies the smoke-test table from issue #2 (`_health_check`), the
-   `users` table + `public_profiles` view from issue #5, and the `aircraft` /
-   `aircraft_memberships` / `communities` tables + RLS from issues #6 and #18 — the rest
-   of the domain schema (timeline entries, squawks, reminders, flights) lands via later
-   issues.
+   `users` table + `public_profiles` view from issue #5, the `aircraft` /
+   `aircraft_memberships` / `communities` tables + RLS from issues #6 and #18, and the
+   `aircraft-images` / `timeline-images` / `flight-images` / `profile-images` Storage
+   buckets + RLS from issue #7 — the rest of the domain schema (timeline entries,
+   squawks, reminders, flights) lands via later issues.
 
 6. **Regenerate the typed client** from the live schema:
 
@@ -155,6 +156,18 @@ Follow these steps once, locally:
 
 The typed client itself lives at `src/services/supabaseClient.ts` and is used everywhere data
 is fetched (TanStack Query + this client — see `docs/ADDENDUM.md` §4).
+
+### Image uploads
+
+Any feature that uploads a photo (aircraft primary photo, timeline photos, flight photos,
+profile photos) should go through `src/services/imageCompression.ts` (client-side resize to a
+2048px long edge + ~80% JPEG compression via `expo-image-manipulator`, per
+`docs/IMPLEMENTATION_SPEC.md` §4) and then `src/services/imageUpload.ts`'s `uploadImage()` —
+never upload an uncompressed original directly. `uploadImage()` throws a calm-copy
+`ImageUploadError` (see `docs/BRAND.md` §17) on network failure or an oversized source file.
+`getDisplayImageUrl()` in the same file returns a signed, RLS-checked URL and can request a
+display-size variant via Supabase Storage's on-the-fly image transformation instead of a
+separate thumbnail pipeline.
 
 ## Secrets
 
