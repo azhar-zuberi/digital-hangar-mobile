@@ -1,7 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { AddAircraftScreen } from '../screens/AddAircraftScreen';
 import { HomeScreen } from '../screens/HomeScreen';
+import { colors, typography } from '../../utils/tokens';
 import { HangarTabs } from './HangarTabs';
 import type { RootStackParamList } from './types';
 
@@ -18,6 +20,21 @@ export function RootNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Hangar" component={HangarTabs} />
+        <Stack.Screen
+          name="AddAircraft"
+          component={AddAircraftScreen}
+          options={{
+            headerShown: true,
+            title: 'Add My Aircraft',
+            headerStyle: { backgroundColor: colors.ivory },
+            headerShadowVisible: false,
+            headerTitleStyle: {
+              color: colors.graphite,
+              fontSize: typography.title2.size,
+              fontWeight: typography.title2.weight,
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
