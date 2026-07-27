@@ -32,10 +32,10 @@ import type { RootStackParamList } from '../navigation/types';
 // absent here; they're a progressive-disclosure edit flow after creation,
 // which is separate, later scope.
 //
-// The submit handler is STUBBED pending issue #9 (the aircraft-creation RPC,
-// built concurrently in another worktree) — see
-// src/services/aircraftService.ts for the full assumed shape and why the
-// photo can't be uploaded until after the aircraft row exists.
+// Submit wires into #9's real create_aircraft_with_owner RPC via
+// useCreateAircraft (src/features/aircraft/useCreateAircraft.ts), which also
+// sequences the photo upload after the aircraft + owner membership exist —
+// see that file for why the upload can't happen before creation.
 type Props = NativeStackScreenProps<RootStackParamList, 'AddAircraft'>;
 
 const initialValues: AircraftFormValues = {
@@ -141,10 +141,9 @@ export function AddAircraftScreen({ navigation }: Props) {
       },
       {
         onSuccess: () => {
-          // Stubbed pending #9 (see src/services/aircraftService.ts) — no
-          // aircraft was actually persisted. The onboarding gate that would
-          // route a newly-created aircraft's owner into Home (#11) doesn't
-          // exist yet either, so this just returns to Home directly.
+          // The onboarding gate that would route a newly-created aircraft's
+          // owner into Home with that aircraft active (#11) doesn't exist
+          // yet, so this just returns to Home directly.
           navigation.navigate('Home');
         },
       },
