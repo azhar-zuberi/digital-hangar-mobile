@@ -10,6 +10,7 @@ spec — `docs/IMPLEMENTATION_SPEC.md` and `docs/ADDENDUM.md` are the current so
 - Supabase (Postgres, Auth, Storage)
 - TanStack Query (React Query) + the Supabase client for server state — no Redux
 - ESLint (`eslint-config-expo`) + Prettier
+- Jest (`jest-expo` preset) + React Native Testing Library for unit/component tests
 
 ## Project structure
 
@@ -43,10 +44,50 @@ npm run lint            # ESLint
 npm run format           # Prettier — write
 npm run format:check     # Prettier — check only
 npm run typecheck        # tsc --noEmit
+npm test                 # Jest — unit + component tests
+npm run test:watch       # Jest — watch mode
+npm run test:coverage    # Jest — with coverage report
 ```
 
 iOS is the MVP target platform (`docs/TDD.md` §4.1, §20); Android/web are not actively
 supported yet, though the architecture doesn't preclude them later.
+
+## Testing
+
+**Framework: Jest + React Native Testing Library**, via the `jest-expo` preset (issue #12).
+`jest-expo` supplies the RN/Expo Jest environment — native module mocks, asset transforms,
+and Babel via `expo/internal/babel-preset` (this project has no `babel.config.js`; Expo
+falls back to its internal preset automatically, both for Metro and for Jest). Config lives
+in `jest.config.js`.
+
+Conventions:
+
+- Test files live in `__tests__/` next to the code they cover, e.g.
+  `src/features/auth/__tests__/authErrors.test.ts`.
+- `@testing-library/react-native`'s `render()` is `async` in the installed version (v14,
+  for React 19 concurrent rendering) — `await render(...)`, not `render(...)`.
+- Custom Jest matchers (`toBeVisible`, etc.) are auto-registered by
+  `@testing-library/react-native` on import; no separate `jest-native` setup needed.
+- See `src/features/auth/__tests__/authErrors.test.ts` (unit test — pure sign-in error
+  classification logic) and `src/components/__tests__/PlaceholderScreen.test.tsx`
+  (component test, via RNTL) for the pattern to follow.
+
+**Detox (on-device E2E): deferred, not adopted for Phase 1.** Reasoning:
+
+- Detox needs a compiled native binary (a real EAS/Xcode build) to drive, which only
+  becomes worth the setup cost once there's enough real screen flow to script end-to-end —
+  right now the app is still mostly scaffolding (nav shell + auth + empty feature folders).
+- It would also gate CI on a native build step, which conflicts with this repo's current
+  verification bar (`CLAUDE.md`: "type-check + lint + automated tests passing — not a
+  simulator boot") and would slow down every PR for coverage the Jest/RNTL layer already
+  gets close enough to for Phase 1.
+- Revisit once Phase 2/3 land enough real user-facing flow (aircraft creation, timeline,
+  Care tab) that a true device-level regression suite pays for itself — and once the QA
+  agent mentioned in `CLAUDE.md` exists to own that loop, rather than folding E2E
+  maintenance onto every feature PR in the meantime.
+
+This is a decision, not a silent gap — revisit the criteria above before assuming Detox is
+still out of scope in a later phase.
 
 ### Previewing the signed-in app on web
 
@@ -89,6 +130,35 @@ not the client-side rules in `.claude/settings.json`:
 These protections are configured in GitHub's UI/API, not in this repo's code, so they can't
 be verified by reading a file here — confirm them in Settings → Branches after this PR merges
 if they aren't already on.
+
+## CI/CD
+
+`.github/workflows/ci.yml` (issue #12) runs on every push/PR to `main` and `develop`:
+
+- **`verify` job** — `npm ci`, then typecheck (`tsc --noEmit`), lint (`expo lint`),
+  Prettier check, and the Jest suite. This is the gate described in `CLAUDE.md` — every PR
+  is checked against this, not a simulator/device build.
+- **`eas-build` job** — only on an actual push to `main`/`develop` (never on a PR), and only
+  after `verify` passes. Triggers `eas build --platform ios --profile beta` on `main` or
+  `--profile development` on `develop`, per the Development/Beta/Production split in
+  `docs/TDD.md` §20 and `docs/IMPLEMENTATION_SPEC.md` §4. If the `EXPO_TOKEN` repo secret
+  isn't set, this step logs a warning and skips rather than failing the workflow — see
+  "Secrets" below for what to add and the manual command to run in the meantime.
+
+`.github/workflows/gitleaks.yml` (pre-existing) scans every push/PR for committed secrets,
+independent of `ci.yml`.
+
+`eas.json` defines three build profiles — `development` (internal, dev client, simulator
+disabled), `beta` (store distribution, for TestFlight), and `production` (store
+distribution, for App Store) — plus matching `submit` profiles for `beta`/`production`.
+EAS Submit reads Apple credentials from environment variables (see "Secrets") rather than
+from `eas.json` itself, so nothing account-identifying is committed.
+
+Production (App Store) submission is a deliberate manual step
+(`eas build --profile production` then `eas submit --profile production`), not automatic on
+every `main` push — this keeps a human in the loop for the one step that's actually
+user-facing and irreversible-ish (an App Store release), while Development/Beta builds stay
+automatic.
 
 ## Local Supabase setup for a new developer
 
@@ -175,3 +245,33 @@ Never commit real credentials. `.env` is gitignored; copy `.env.example` and fil
 own values locally. Every push and PR is scanned by `.github/workflows/gitleaks.yml` as a
 backstop (this repo is private, so GitHub's free push-protection secret scanning doesn't
 apply automatically).
+
+### Required GitHub Actions secrets
+
+None of these are set yet (`ci.yml`'s `eas-build` job checks for `EXPO_TOKEN` and skips
+with a warning, rather than failing, until it's added). Add via Settings → Secrets and
+variables → Actions, or `gh secret set <NAME>`:
+
+| Secret | Used for |
+| --- | --- |
+| `EXPO_TOKEN` | Authenticates `eas build` in CI (`eas-build` job in `ci.yml`). Generate a robot/personal access token from your Expo account. Without it, the EAS Build trigger step is a documented manual step instead (see `ci.yml`'s skip-warning message for the exact command). |
+| `EXPO_APPLE_ID` | Apple ID email for `eas submit` (TestFlight/App Store) — read by the EAS CLI directly from the environment, not from `eas.json`. Only needed once submission is automated; not required for `eas build` alone. |
+| `EXPO_APPLE_APP_SPECIFIC_PASSWORD` | App-specific password for the same Apple ID, for non-interactive `eas submit`. |
+| `EXPO_ASC_APP_ID` | App Store Connect app ID, for `eas submit`. |
+| `EXPO_APPLE_TEAM_ID` | Apple Developer Team ID, for `eas submit`. |
+
+The Supabase URL/anon key are public-by-design client values (`EXPO_PUBLIC_*`, read from
+`.env` at build time) and Apple/Google sign-in credentials are configured as native
+app/plugin config (`app.json`, `GoogleService-Info.plist` equivalents), not as GitHub
+Actions secrets — there's no server-side Actions step today that needs them injected.
+
+**Note on where these actually belong:** the GitHub Actions runner in `ci.yml` only
+*triggers* `eas build`; the native build itself runs on EAS's own build infrastructure, not
+on the Actions runner. So any value the compiled app needs at build time (Supabase
+URL/anon key, Google `iosUrlScheme`, etc.) has to be provided to *EAS*, not GitHub
+Actions — via `eas secret:create` (or an EAS environment variable) — not a GitHub Actions
+secret. `EXPO_TOKEN` is the one credential that genuinely belongs in GitHub Actions, since
+it's what authenticates the Actions runner to EAS in the first place. Currently `app.json`
+has no `.env`/EXPO_PUBLIC_* dependency baked into the native build step, so this hasn't
+bitten anyone yet — flagging it now so it isn't assumed solved once real EAS builds start
+running from CI.

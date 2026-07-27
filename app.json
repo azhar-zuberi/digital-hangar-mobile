@@ -39,6 +39,13 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Digital Hangar uses your photos to add a picture of your aircraft.",
+          "cameraPermission": "Digital Hangar uses your camera to take a picture of your aircraft."
+        }
       ]
     ],
     "extra": {

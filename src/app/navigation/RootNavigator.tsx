@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { colors, typography } from '../../utils/tokens';
-import { AddAircraftPlaceholderScreen } from '../screens/AddAircraftPlaceholderScreen';
+import { AddAircraftScreen } from '../screens/AddAircraftScreen';
 import { AircraftProfileScreen } from '../screens/AircraftProfileScreen';
 import { FindAircraftScreen } from '../screens/FindAircraftScreen';
 import { HomeScreen } from '../screens/HomeScreen';
@@ -37,11 +37,6 @@ const subScreenHeaderOptions = {
 // (issue #26, and #8's form) are registered so they're reachable and
 // testable ahead of that gate landing, not because the gate is wired here.
 //
-// NOTE — expected merge conflict: issue #8 (Add My Aircraft form) is being
-// built concurrently in a separate branch and also registers an
-// `AddAircraft` screen here. Whichever of #8/#26 merges into develop second
-// should keep #8's real form component for that route and drop
-// AddAircraftPlaceholderScreen (see that file's header comment).
 export function RootNavigator() {
   return (
     <NavigationContainer>
@@ -51,7 +46,7 @@ export function RootNavigator() {
         <Stack.Screen name="OnboardingChoice" component={OnboardingChoiceScreen} />
         <Stack.Screen
           name="AddAircraft"
-          component={AddAircraftPlaceholderScreen}
+          component={AddAircraftScreen}
           options={{ ...subScreenHeaderOptions, headerTitle: 'Add My Aircraft' }}
         />
         <Stack.Screen
