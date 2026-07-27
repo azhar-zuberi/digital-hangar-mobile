@@ -31,11 +31,12 @@ export function HomeScreen({ navigation }: Props) {
       <Pressable onPress={() => navigation.navigate('Hangar')} style={styles.enter}>
         <Text style={styles.enterText}>Enter the Hangar</Text>
       </Pressable>
-      {/* Temporary stand-in for the onboarding choice screen (#26) and the
-          "no aircraft yet" gate (#11) — neither exists yet, so this is the
-          smallest way to make the "Add My Aircraft" form (#8) reachable for
-          manual verification in the meantime. */}
-      <Pressable onPress={() => navigation.navigate('AddAircraft')} style={styles.addAircraft}>
+      {/* Temporary stand-in for the "no aircraft yet" gate (#11), which
+          doesn't exist yet — this is the smallest way to make the onboarding
+          choice screen (#26), and through it "Add My Aircraft" (#8) and
+          "Find an Aircraft" (#26), reachable for manual verification in the
+          meantime. */}
+      <Pressable onPress={() => navigation.navigate('OnboardingChoice')} style={styles.addAircraft}>
         <Text style={styles.addAircraftText}>Add an aircraft</Text>
       </Pressable>
       <Pressable onPress={handleSignOut} style={styles.signOut}>
