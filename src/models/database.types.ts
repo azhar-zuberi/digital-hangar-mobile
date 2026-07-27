@@ -201,6 +201,40 @@ export type Database = {
         Args: { target_aircraft_id: string };
         Returns: boolean;
       };
+      create_aircraft_with_owner: {
+        Args: {
+          p_engine_information?: string;
+          p_home_airport?: string;
+          p_manufacturer: string;
+          p_model: string;
+          p_nickname?: string;
+          p_primary_photo_url?: string;
+          p_registration: string;
+          p_serial_number?: string;
+          p_year?: number;
+        };
+        Returns: {
+          created_at: string;
+          engine_information: string | null;
+          home_airport: string | null;
+          id: string;
+          manufacturer: string;
+          model: string;
+          nickname: string | null;
+          primary_photo_url: string | null;
+          registration: string;
+          serial_number: string | null;
+          updated_at: string;
+          visibility: string;
+          year: number | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'aircraft';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       is_aircraft_member: {
         Args: { target_aircraft_id: string };
         Returns: boolean;
