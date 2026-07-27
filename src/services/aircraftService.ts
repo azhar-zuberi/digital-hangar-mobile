@@ -1,98 +1,72 @@
-// Aircraft-creation service call for the "Add My Aircraft" form (issue #8).
+import type { Database } from '../models/database.types';
+import { supabase } from './supabaseClient';
+
+// Issue #9: aircraft creation + owner membership transaction.
 //
-// ============================================================================
-// STUBBED — pending issue #9 ("Postgres RPC + client service function for
-// creating an aircraft + owner membership atomically"), which is being built
-// concurrently in another worktree. `createAircraft` below does NOT talk to
-// Supabase yet. It simulates a successful creation (after a short delay, so
-// the form's loading state is visible) so the rest of the form — validation,
-// photo picking, error rendering, navigation on success — can be built,
-// reviewed, and tested independently of #9 landing.
+// Wraps the create_aircraft_with_owner Postgres function
+// (supabase/migrations/20260727120000_create_aircraft_with_owner_rpc.sql),
+// which creates the `aircraft` row and the creator's `owner`
+// `aircraft_memberships` row (verified = true) as a single atomic operation
+// — no window where one exists without the other, per
+// docs/IMPLEMENTATION_SPEC.md §1.2/§1.3. `aircraft.visibility` is not a
+// parameter: it always takes the column default (`community`), per
+// docs/ADDENDUM.md §A ("automatic membership, no additional setup").
 //
-// ASSUMED SHAPE for whoever wires the real call once #9 merges:
+// Photo sequencing: `primaryPhotoPath` is accepted for forward-compatibility
+// but should be left undefined by the real "Add My Aircraft" flow. The
+// `aircraft-images` Storage bucket's insert policy
+// (supabase/migrations/20260726200000_create_storage_buckets.sql) requires
+// `is_verified_owner(aircraft_id)`, which can't be true until the owner
+// membership row this call creates exists — and Storage uploads are a
+// separate HTTP surface from this RPC, so they can't happen inside the same
+// transaction regardless. The intended flow for a screen collecting a
+// required primary photo up front (docs/IMPLEMENTATION_SPEC.md §2 step 3):
 //
-//   1. `createAircraft` will call a Postgres RPC (e.g.
-//      `supabase.rpc('create_aircraft_with_owner', { registration,
-//      manufacturer, model })`) that, in one transaction, inserts the
-//      `aircraft` row (visibility defaults to 'community' per
-//      IMPLEMENTATION_SPEC.md §1.2) and an `aircraft_memberships` row for the
-//      caller with relationship='owner', verified=true, and returns the new
-//      aircraft's id.
+//   1. const aircraft = await createAircraft({ registration, manufacturer, model, ... });
+//   2. const { storagePath } = await uploadImage({ bucket: IMAGE_BUCKETS.aircraft, folderId: aircraft.id, sourceUri });
+//   3. await supabase.from('aircraft').update({ primary_photo_url: storagePath }).eq('id', aircraft.id);
+//      (allowed by the pre-existing aircraft_update_verified_owner policy,
+//      since the owner membership from step 1 already exists)
 //
-//   2. IMPORTANT — the primary photo CANNOT be uploaded before that RPC
-//      returns. The `aircraft-images` Storage bucket's insert policy is
-//      `is_verified_owner(storage_first_path_uuid(name))`
-//      (supabase/migrations/20260726200000_create_storage_buckets.sql), keyed
-//      on {aircraft_id}/{filename} — so both the aircraft row AND the
-//      caller's verified-owner membership must exist first, or the upload is
-//      denied by RLS. The real flow is therefore: create the aircraft (no
-//      photo) -> upload the compressed photo to
-//      `aircraft-images/{newAircraftId}/...` via src/services/imageUpload.ts
-//      (bucket: 'aircraft', folderId: newAircraftId) -> update
-//      `aircraft.primary_photo_url` to the resulting storage path. This
-//      function's signature already reflects that: it takes the raw picker
-//      URI, not a pre-uploaded storage path, so the upload-after-create step
-//      can be slotted into this function's body without changing its
-//      contract with the form/hook above it.
-//
-//   3. Duplicate registration: the real RPC will reject with a Postgres
-//      unique-violation (code 23505, on the `aircraft_registration_key`
-//      constraint — see IMPLEMENTATION_SPEC.md §1.2's `registration text not
-//      null unique`). `classifyCreateAircraftError` below already recognizes
-//      that shape, so the inline "already taken" error on the registration
-//      field works unchanged once the stub is replaced — no separate
-//      pre-submit "is this registration free?" query is assumed, since a
-//      plain client-side select against `aircraft` would be filtered by
-//      `can_view_aircraft` RLS and could wrongly report a private aircraft's
-//      registration as available (see PR notes for this issue).
-//
-// TODO(#9): replace this function's body with the real RPC call (and the
-// upload-then-update sequence in step 2). Don't change the exported
-// signature or the error shapes below without checking with whoever
-// implements #9 and whoever wired this hook up on the form side.
-// ============================================================================
+// Step 3 is deliberately not wrapped here — it's a plain, already-supported
+// table update, not part of this issue's atomic-creation contract.
+
+export type Aircraft = Database['public']['Tables']['aircraft']['Row'];
 
 export type CreateAircraftInput = {
-  /** Expected already normalized (trimmed, uppercased) by the caller — see
-   * src/features/aircraft/aircraftValidation.ts's normalizeRegistration. */
   registration: string;
   manufacturer: string;
   model: string;
-  /** Local file:// (native) or blob:/data: (web) URI from the image picker —
-   * NOT yet compressed or uploaded. See the module header for why this
-   * function (not the caller) owns the upload-after-create sequencing. */
-  primaryPhotoUri: string;
+  nickname?: string;
+  year?: number;
+  serialNumber?: string;
+  engineInformation?: string;
+  homeAirport?: string;
+  /** See the sequencing note above — leave undefined in the real onboarding flow. */
+  primaryPhotoPath?: string;
 };
 
-export type CreatedAircraft = {
-  id: string;
-};
-
-export class DuplicateRegistrationError extends Error {
-  constructor(readonly registration: string) {
-    super(`Registration "${registration}" is already registered to another aircraft.`);
-    this.name = 'DuplicateRegistrationError';
-  }
-}
-
-// Calm, non-alarming copy per docs/BRAND.md §17 — mirrors the pattern in
+// Calm, non-alarming copy for creation failure states, per docs/BRAND.md §17
+// — mirrors the pattern already established in
 // src/features/auth/authErrors.ts and src/services/imageUpload.ts.
-export type CreateAircraftErrorReason = 'duplicate_registration' | 'network' | 'unknown';
+export type AircraftCreationErrorReason = 'duplicate_registration' | 'network' | 'unknown';
 
-export const CREATE_AIRCRAFT_ERROR_COPY: Record<CreateAircraftErrorReason, string> = {
+export const AIRCRAFT_CREATION_ERROR_COPY: Record<AircraftCreationErrorReason, string> = {
   duplicate_registration:
-    "That registration's already in the hangar. Double-check the tail number.",
+    "That tail number's already registered here. Double-check it and try again.",
   network: "Couldn't reach Digital Hangar just now. Check your connection and try again.",
   unknown: "That didn't go through. Give it another try in a moment.",
 };
 
-export function classifyCreateAircraftError(error: unknown): CreateAircraftErrorReason {
-  if (error instanceof DuplicateRegistrationError) return 'duplicate_registration';
+// Postgres error code for a unique-constraint violation — surfaced by
+// PostgREST/supabase-js as a string `code` on the error object. Fires here
+// on a duplicate `aircraft.registration`.
+const UNIQUE_VIOLATION_CODE = '23505';
 
-  // Postgres unique_violation, as raised by supabase-js's PostgrestError.
+export function classifyAircraftCreationError(error: unknown): AircraftCreationErrorReason {
   if (error && typeof error === 'object' && 'code' in error) {
     const code = String((error as { code?: unknown }).code);
-    if (code === '23505') return 'duplicate_registration';
+    if (code === UNIQUE_VIOLATION_CODE) return 'duplicate_registration';
   }
 
   if (error instanceof Error && /network|fetch|offline|timed? ?out/i.test(error.message)) {
@@ -102,31 +76,46 @@ export function classifyCreateAircraftError(error: unknown): CreateAircraftError
   return 'unknown';
 }
 
-// Stub-only id generator — deliberately NOT expo-crypto's randomUUID or a
-// Postgres-generated id, since nothing here is persisted. Swapped out
-// entirely (the RPC's response supplies the real id) once #9 lands.
-function mockAircraftId(): string {
-  return `stub-aircraft-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+export class AircraftCreationError extends Error {
+  readonly reason: AircraftCreationErrorReason;
+
+  constructor(reason: AircraftCreationErrorReason, cause?: unknown) {
+    super(AIRCRAFT_CREATION_ERROR_COPY[reason]);
+    this.name = 'AircraftCreationError';
+    this.reason = reason;
+    this.cause = cause;
+  }
 }
 
 /**
- * Creates an aircraft + owner membership. See the module header — this is
- * currently a stub that simulates success and does not persist anything.
+ * Creates the aircraft row and the creator's owner membership row atomically
+ * via the `create_aircraft_with_owner` RPC. Throws `AircraftCreationError`
+ * (calm, brand-voice `.message`) on any failure — because the underlying
+ * function call is a single Postgres statement, a thrown error here means
+ * *nothing* was written (no orphaned `aircraft` row, no orphaned
+ * `aircraft_memberships` row), so callers can safely leave the person on the
+ * form and let them retry.
  */
-export async function createAircraft(input: CreateAircraftInput): Promise<CreatedAircraft> {
-  // `__DEV__` is a React Native/Metro global injected at bundle time — guard
-  // with `typeof` so this file stays safely importable from any plain-Node
-  // context (e.g. a future test runner, per #12) where it isn't defined.
-  if (typeof __DEV__ !== 'undefined' && __DEV__) {
-    console.warn(
-      '[aircraftService] createAircraft is STUBBED pending #9 — simulating success, nothing was persisted.',
-      input,
-    );
+export async function createAircraft(input: CreateAircraftInput): Promise<Aircraft> {
+  const { data, error } = await supabase.rpc('create_aircraft_with_owner', {
+    p_registration: input.registration,
+    p_manufacturer: input.manufacturer,
+    p_model: input.model,
+    p_nickname: input.nickname,
+    p_year: input.year,
+    p_serial_number: input.serialNumber,
+    p_engine_information: input.engineInformation,
+    p_home_airport: input.homeAirport,
+    p_primary_photo_url: input.primaryPhotoPath,
+  });
+
+  if (error) {
+    throw new AircraftCreationError(classifyAircraftCreationError(error), error);
   }
 
-  // Small delay so the form's loading state is exercised in manual/expo-web
-  // verification rather than resolving instantly.
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  if (!data) {
+    throw new AircraftCreationError('unknown');
+  }
 
-  return { id: mockAircraftId() };
+  return data;
 }
