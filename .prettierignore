@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+dist/
+web-build/
+coverage/
+package-lock.json
+
+# Docs and agent config are hand-maintained prose/markdown, not app source —
+# out of scope for this project's Prettier formatting.
+docs/
+.claude/
+*.md

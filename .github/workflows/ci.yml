@@ -1,0 +1,94 @@
+name: CI
+
+# Verification gate per CLAUDE.md: "type-check + lint + automated tests
+# passing" — this is what every PR is checked against going forward, not a
+# simulator boot. See docs/TDD.md §18 (Development Practices) and
+# docs/IMPLEMENTATION_SPEC.md §4 (CI/CD).
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  verify:
+    name: Typecheck, lint, and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Test
+        run: npm test -- --ci --coverage
+
+  eas-build:
+    name: Trigger EAS Build
+    needs: verify
+    # Only on an actual merge to main/develop, never on a PR — this is the
+    # "GitHub Actions workflow ... triggers an EAS Build on merge to
+    # main/develop" acceptance criterion (docs/ADDENDUM.md / TDD §18, §20).
+    # develop -> "development" channel/profile builds; main -> "beta"
+    # (TestFlight), per the Development/Beta/Production split in TDD §20.
+    # Production (App Store) submission stays a deliberate manual step
+    # (`eas build --profile production && eas submit --profile production`)
+    # rather than automatic on every main push — see README "CI/CD".
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for EXPO_TOKEN
+        id: token-check
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: EXPO_TOKEN not configured — skipping
+        if: steps.token-check.outputs.present == 'false'
+        run: |
+          echo "::warning::EXPO_TOKEN repo secret is not set, so the EAS Build trigger is skipped. See README 'CI/CD' for the secret this workflow expects. This is a documented manual step until the secret is added: run 'eas build --platform ios --profile ${{ github.ref == 'refs/heads/main' && 'beta' || 'development' }} --non-interactive' locally."
+
+      - name: Set up EAS
+        if: steps.token-check.outputs.present == 'true'
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: EAS Build (iOS)
+        if: steps.token-check.outputs.present == 'true'
+        run: |
+          eas build --platform ios \
+            --profile ${{ github.ref == 'refs/heads/main' && 'beta' || 'development' }} \
+            --non-interactive --no-wait

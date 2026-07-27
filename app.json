@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "Digital Hangar",
+    "slug": "digital-hangar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.digitalhangar.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.RECORD_AUDIO"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.437508253809-h4qnagpj8t7n5h0kkuaec1bpejd3u8i9"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Digital Hangar uses your photos to add a picture of your aircraft.",
+          "cameraPermission": "Digital Hangar uses your camera to take a picture of your aircraft."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "03e3f9e8-303a-4333-b41a-2f7dd088afd8"
+      }
+    },
+    "owner": "azuberi",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/03e3f9e8-303a-4333-b41a-2f7dd088afd8"
+    }
+  }
+}
