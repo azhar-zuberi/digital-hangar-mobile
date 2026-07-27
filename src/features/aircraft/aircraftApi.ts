@@ -63,3 +63,21 @@ export async function fetchAircraftById(aircraftId: string): Promise<AircraftSum
   if (error) throw error;
   return data;
 }
+
+// The single signal behind the Home gating guard (issue #11): does the
+// signed-in user have at least one `aircraft_memberships` row (owner,
+// co-owner, or caretaker), regardless of relationship or verified status?
+// `head: true` skips fetching row data entirely — the gate only needs a
+// count, never the membership rows themselves. RLS's
+// `aircraft_memberships_select` policy (`user_id = auth.uid() or
+// is_aircraft_member(aircraft_id)`) already scopes this to the caller's own
+// rows, so no extra filtering is needed beyond `user_id = userId` here.
+export async function fetchHasAircraftMembership(userId: string): Promise<boolean> {
+  const { count, error } = await supabase
+    .from('aircraft_memberships')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId);
+
+  if (error) throw error;
+  return (count ?? 0) > 0;
+}

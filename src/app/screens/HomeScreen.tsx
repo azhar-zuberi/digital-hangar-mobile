@@ -8,8 +8,14 @@ import type { RootStackParamList } from '../navigation/types';
 // Placeholder for Home ("My Digital Hangar") — real content (hero photo,
 // ownership snapshot, recent hangar activity per IMPLEMENTATION_SPEC.md §2)
 // is out of scope for issue #10, which only needs Home reachable as the
-// entry point above the Story/Care/Fly tab navigator. The "no aircraft yet
-// → onboarding" gate is separate, later scope (#11).
+// entry point above the Story/Care/Fly tab navigator. By the time a user
+// reaches this screen, issue #11's gate (RootNavigator.tsx) has already
+// confirmed they have at least one aircraft membership — a user with zero
+// aircraft never lands here; they're routed to OnboardingChoice instead. The
+// former "Add an aircraft" stand-in button that used to live here (added in
+// #10 ahead of #11's real gate) has been removed as redundant now that the
+// automatic redirect exists; "add another aircraft" for an existing owner is
+// Profile/Settings scope (IMPLEMENTATION_SPEC.md §2), not Home's.
 //
 // The "Sign out" link here is a stand-in for issue #3/#4's sign-out
 // requirement. Its real home is Profile/Settings (IMPLEMENTATION_SPEC.md
@@ -30,14 +36,6 @@ export function HomeScreen({ navigation }: Props) {
       <Text style={styles.subtitle}>Your aircraft&apos;s digital home is on its way.</Text>
       <Pressable onPress={() => navigation.navigate('Hangar')} style={styles.enter}>
         <Text style={styles.enterText}>Enter the Hangar</Text>
-      </Pressable>
-      {/* Temporary stand-in for the "no aircraft yet" gate (#11), which
-          doesn't exist yet — this is the smallest way to make the onboarding
-          choice screen (#26), and through it "Add My Aircraft" (#8) and
-          "Find an Aircraft" (#26), reachable for manual verification in the
-          meantime. */}
-      <Pressable onPress={() => navigation.navigate('OnboardingChoice')} style={styles.addAircraft}>
-        <Text style={styles.addAircraftText}>Add an aircraft</Text>
       </Pressable>
       <Pressable onPress={handleSignOut} style={styles.signOut}>
         <Text style={styles.signOutText}>Sign out</Text>
@@ -76,15 +74,6 @@ const styles = StyleSheet.create({
     fontSize: typography.body.size,
     fontWeight: '600',
     color: colors.ivory,
-  },
-  addAircraft: {
-    marginTop: spacing.lg,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  addAircraftText: {
-    fontSize: typography.caption.size,
-    color: colors.graphite,
   },
   signOut: {
     marginTop: spacing.xl,
