@@ -31,6 +31,13 @@ export function HomeScreen({ navigation }: Props) {
       <Pressable onPress={() => navigation.navigate('Hangar')} style={styles.enter}>
         <Text style={styles.enterText}>Enter the Hangar</Text>
       </Pressable>
+      {/* Temporary stand-in for the onboarding choice screen (#26) and the
+          "no aircraft yet" gate (#11) — neither exists yet, so this is the
+          smallest way to make the "Add My Aircraft" form (#8) reachable for
+          manual verification in the meantime. */}
+      <Pressable onPress={() => navigation.navigate('AddAircraft')} style={styles.addAircraft}>
+        <Text style={styles.addAircraftText}>Add an aircraft</Text>
+      </Pressable>
       <Pressable onPress={handleSignOut} style={styles.signOut}>
         <Text style={styles.signOutText}>Sign out</Text>
       </Pressable>
@@ -68,6 +75,15 @@ const styles = StyleSheet.create({
     fontSize: typography.body.size,
     fontWeight: '600',
     color: colors.ivory,
+  },
+  addAircraft: {
+    marginTop: spacing.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+  addAircraftText: {
+    fontSize: typography.caption.size,
+    color: colors.graphite,
   },
   signOut: {
     marginTop: spacing.xl,
