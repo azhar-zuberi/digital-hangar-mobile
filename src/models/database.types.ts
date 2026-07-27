@@ -147,6 +147,93 @@ export type Database = {
         };
         Relationships: [];
       };
+      timeline_entries: {
+        Row: {
+          aircraft_id: string;
+          created_at: string;
+          created_by: string;
+          description: string | null;
+          event_date: string;
+          id: string;
+          title: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          aircraft_id: string;
+          created_at?: string;
+          created_by: string;
+          description?: string | null;
+          event_date: string;
+          id?: string;
+          title: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          aircraft_id?: string;
+          created_at?: string;
+          created_by?: string;
+          description?: string | null;
+          event_date?: string;
+          id?: string;
+          title?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'timeline_entries_aircraft_id_fkey';
+            columns: ['aircraft_id'];
+            isOneToOne: false;
+            referencedRelation: 'aircraft';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'timeline_entries_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'public_profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'timeline_entries_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      timeline_photos: {
+        Row: {
+          created_at: string;
+          id: string;
+          storage_path: string;
+          timeline_entry_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          storage_path: string;
+          timeline_entry_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          storage_path?: string;
+          timeline_entry_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'timeline_photos_timeline_entry_id_fkey';
+            columns: ['timeline_entry_id'];
+            isOneToOne: false;
+            referencedRelation: 'timeline_entries';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       users: {
         Row: {
           created_at: string;
