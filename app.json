@@ -20,7 +20,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -53,6 +54,12 @@
         "projectId": "03e3f9e8-303a-4333-b41a-2f7dd088afd8"
       }
     },
-    "owner": "azuberi"
+    "owner": "azuberi",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/03e3f9e8-303a-4333-b41a-2f7dd088afd8"
+    }
   }
 }
