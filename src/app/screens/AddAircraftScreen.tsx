@@ -141,9 +141,11 @@ export function AddAircraftScreen({ navigation }: Props) {
       },
       {
         onSuccess: () => {
-          // The onboarding gate that would route a newly-created aircraft's
-          // owner into Home with that aircraft active (#11) doesn't exist
-          // yet, so this just returns to Home directly.
+          // useCreateAircraft's mutation already invalidates the Home
+          // gating guard's membership query (issue #11) on success, so by
+          // the time this fires, decideHomeGate would resolve to 'home' for
+          // this user too — this explicit navigate just moves them there
+          // without waiting on a future gate re-evaluation.
           navigation.navigate('Home');
         },
       },

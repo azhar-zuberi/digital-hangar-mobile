@@ -16,11 +16,10 @@ export type HangarTabParamList = {
 // OnboardingChoice / AddAircraft / FindAircraft / AircraftProfile are the
 // onboarding screens (IMPLEMENTATION_SPEC.md §2 steps 2, 3, and 5) from
 // issues #26 (choice/search/profile) and #8 (the Add My Aircraft form
-// itself). The gate that routes a signed-in user with zero aircraft to
-// OnboardingChoice automatically is issue #11's separate scope, not wired up
-// here — see RootNavigator.tsx. `AddAircraft` is reachable both from
-// OnboardingChoice's "Add My Aircraft" button and, until #11 lands, directly
-// from Home as a temporary stand-in.
+// itself). Issue #11 routes a signed-in user with zero `aircraft_memberships`
+// rows to OnboardingChoice automatically as the stack's initial route — see
+// RootNavigator.tsx's `decideHomeGate` usage. `AddAircraft` is also reachable
+// from OnboardingChoice's "Add My Aircraft" button.
 export type RootStackParamList = {
   Home: undefined;
   Hangar: NavigatorScreenParams<HangarTabParamList> | undefined;

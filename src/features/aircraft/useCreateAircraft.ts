@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
   AIRCRAFT_CREATION_ERROR_COPY,
@@ -14,6 +14,7 @@ import {
 } from '../../services/imageUpload';
 import { supabase } from '../../services/supabaseClient';
 import { normalizeRegistration } from './aircraftValidation';
+import { AIRCRAFT_MEMBERSHIP_QUERY_KEY } from './useHasAircraftMembership';
 
 export type CreateAircraftVariables = {
   registration: string;
@@ -86,13 +87,18 @@ function classifySubmitError(error: unknown): { reason: SubmitErrorReason; messa
 // loading/error state for free, consistent with useSocialSignIn.ts's pattern
 // for the sign-in flow.
 //
-// No `onSuccess` cache invalidation yet: there's no "current user's aircraft
-// list" query to invalidate until the onboarding gate (#11) and Home's real
-// data exist. This is the natural place to add
-// `queryClient.invalidateQueries(...)` once that query key exists.
+// On success, invalidates the Home gating guard's membership query (issue
+// #11's useHasAircraftMembership) so a freshly-created owner membership is
+// picked up immediately rather than leaving RootNavigator's gate decision
+// stale until some unrelated refetch happens to run.
 export function useCreateAircraft() {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: createAircraftWithPhoto,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: AIRCRAFT_MEMBERSHIP_QUERY_KEY });
+    },
   });
 
   const classified = mutation.error ? classifySubmitError(mutation.error) : null;
