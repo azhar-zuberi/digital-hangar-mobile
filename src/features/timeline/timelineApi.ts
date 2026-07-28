@@ -120,6 +120,31 @@ export async function fetchTimelineEntryById(entryId: string): Promise<TimelineE
   return toTimelineEntry(data as unknown as RawTimelineEntryRow);
 }
 
+/**
+ * Home screen's Recent Hangar Activity feed (issue #38): the `limit` most
+ * recent entries for one aircraft, same STORY_TYPES filter and ordering as
+ * fetchTimelineEntries above (memory/milestone only — maintenance stays
+ * Care-tab content, per this module's top-of-file note), just capped
+ * server-side since Home only ever needs a handful, not the full Story
+ * list.
+ */
+export async function fetchRecentTimelineEntries(
+  aircraftId: string,
+  limit: number,
+): Promise<TimelineEntry[]> {
+  const { data, error } = await supabase
+    .from('timeline_entries')
+    .select(TIMELINE_ENTRY_COLUMNS)
+    .eq('aircraft_id', aircraftId)
+    .in('type', STORY_TYPES)
+    .order('event_date', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data ?? []).map((row) => toTimelineEntry(row as unknown as RawTimelineEntryRow));
+}
+
 export type InsertTimelineEntryInput = {
   aircraftId: string;
   createdBy: string;
