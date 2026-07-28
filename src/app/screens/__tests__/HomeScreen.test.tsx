@@ -1,12 +1,19 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { HomeScreen } from '../HomeScreen';
 import { useSelectedAircraft } from '../../../features/aircraft/useSelectedAircraft';
+import { useRecentHangarActivity } from '../../../features/home/useRecentHangarActivity';
 
 jest.mock('../../../features/aircraft/useSelectedAircraft');
 jest.mock('../../../features/auth/signOut', () => ({ signOut: jest.fn(() => Promise.resolve()) }));
+// Issue #38 (merged after this file was first written) added RecentHangarActivity
+// to HomeScreen, which calls useQuery — mock the hook per the StoryScreen.test.tsx
+// precedent so these Edit-Profile-focused tests don't need a real network layer.
+jest.mock('../../../features/home/useRecentHangarActivity');
 
 const mockedUseSelectedAircraft = useSelectedAircraft as jest.Mock;
+const mockedUseRecentHangarActivity = useRecentHangarActivity as jest.Mock;
 
 function baseAircraft(overrides: Partial<Record<string, unknown>> = {}) {
   return {
@@ -27,8 +34,13 @@ async function renderHomeScreen({ navigate = jest.fn() }: { navigate?: jest.Mock
     navigation: { navigate } as never,
     route: { key: 'Home', name: 'Home' as const, params: undefined },
   };
+  const queryClient = new QueryClient();
 
-  await render(<HomeScreen {...props} />);
+  await render(
+    <QueryClientProvider client={queryClient}>
+      <HomeScreen {...props} />
+    </QueryClientProvider>,
+  );
 
   return { navigate };
 }
@@ -40,6 +52,13 @@ async function renderHomeScreen({ navigate = jest.fn() }: { navigate?: jest.Mock
 describe('HomeScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseRecentHangarActivity.mockReturnValue({
+      timelineItems: [],
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    });
   });
 
   it('shows an Edit Profile button for the selected aircraft', async () => {
