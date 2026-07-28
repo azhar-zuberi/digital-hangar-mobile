@@ -11,3 +11,13 @@
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
+
+// @supabase/realtime-js requires a native `WebSocket` global (stable from
+// Node 22 onward) and throws at client-construction time without one — CI
+// runs on Node 20 (.github/workflows/ci.yml), so any test that transitively
+// imports src/services/supabaseClient.ts crashes before a single assertion
+// runs. `ws` provides a spec-compatible constructor for Node versions that
+// don't have a native one.
+if (typeof global.WebSocket === 'undefined') {
+  global.WebSocket = require('ws');
+}
