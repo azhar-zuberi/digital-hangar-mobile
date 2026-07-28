@@ -18,13 +18,31 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
+// createClient() validates its URL argument eagerly and throws on an empty
+// string (rather than just failing later on first request), which would
+// defeat the "non-fatal at import time" intent above — CI's test job (and
+// any local `npm test` run without a `.env`, since `.env` is gitignored)
+// has no EXPO_PUBLIC_SUPABASE_* vars set, and any test that transitively
+// imports this module (e.g. via imageUpload.ts) would otherwise crash the
+// whole suite before a single assertion runs. A syntactically-valid
+// placeholder keeps client construction non-fatal in that case; real
+// requests against it still fail (network error against a host that
+// doesn't resolve), same as the pre-existing "fails loudly once features
+// start calling this client" behavior this comment already documented.
+const FALLBACK_SUPABASE_URL = 'https://placeholder.supabase.co';
+const FALLBACK_SUPABASE_ANON_KEY = 'placeholder-anon-key';
+
 // Typed against src/models/database.types.ts (generated via `npm run db:types`
 // once linked to the live project — see issue #2 / README "Local Supabase setup").
-export const supabase = createClient<Database>(supabaseUrl ?? '', supabaseAnonKey ?? '', {
-  auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
+export const supabase = createClient<Database>(
+  supabaseUrl ?? FALLBACK_SUPABASE_URL,
+  supabaseAnonKey ?? FALLBACK_SUPABASE_ANON_KEY,
+  {
+    auth: {
+      storage: AsyncStorage,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
   },
-});
+);

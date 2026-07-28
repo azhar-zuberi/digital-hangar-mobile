@@ -11,4 +11,9 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/.expo/'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/models/database.types.ts'],
+  // See jest.setup.js — mocks @react-native-async-storage/async-storage,
+  // which isn't covered by jest-expo's preset. Added here (issue #36) once
+  // a Story-tab test first exercised the src/services/supabaseClient.ts
+  // import chain that pulls it in.
+  setupFiles: ['<rootDir>/jest.setup.js'],
 };
