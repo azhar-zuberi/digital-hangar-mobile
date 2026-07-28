@@ -15,6 +15,7 @@ import {
 import { supabase } from '../../services/supabaseClient';
 import { normalizeRegistration } from './aircraftValidation';
 import { AIRCRAFT_MEMBERSHIP_QUERY_KEY } from './useHasAircraftMembership';
+import { OWNED_AIRCRAFT_QUERY_KEY } from './useOwnedAircraft';
 
 export type CreateAircraftVariables = {
   registration: string;
@@ -90,7 +91,9 @@ function classifySubmitError(error: unknown): { reason: SubmitErrorReason; messa
 // On success, invalidates the Home gating guard's membership query (issue
 // #11's useHasAircraftMembership) so a freshly-created owner membership is
 // picked up immediately rather than leaving RootNavigator's gate decision
-// stale until some unrelated refetch happens to run.
+// stale until some unrelated refetch happens to run. Also invalidates
+// useOwnedAircraft.ts's query (issue #35) so the new aircraft shows up in
+// Home's hero content / aircraft switcher right away.
 export function useCreateAircraft() {
   const queryClient = useQueryClient();
 
@@ -98,6 +101,7 @@ export function useCreateAircraft() {
     mutationFn: createAircraftWithPhoto,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AIRCRAFT_MEMBERSHIP_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: OWNED_AIRCRAFT_QUERY_KEY });
     },
   });
 
