@@ -7,6 +7,7 @@ import { colors, typography } from '../../utils/tokens';
 import { AddAircraftScreen } from '../screens/AddAircraftScreen';
 import { AddTimelineEntryScreen } from '../screens/AddTimelineEntryScreen';
 import { AircraftProfileScreen } from '../screens/AircraftProfileScreen';
+import { EditAircraftProfileScreen } from '../screens/EditAircraftProfileScreen';
 import { FindAircraftScreen } from '../screens/FindAircraftScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { OnboardingChoiceScreen } from '../screens/OnboardingChoiceScreen';
@@ -88,6 +89,11 @@ export function RootNavigator() {
           name="AircraftProfile"
           component={AircraftProfileScreen}
           options={{ ...subScreenHeaderOptions, headerTitle: 'Aircraft Profile' }}
+        />
+        <Stack.Screen
+          name="EditAircraftProfile"
+          component={EditAircraftProfileScreen}
+          options={{ ...subScreenHeaderOptions, headerTitle: 'Edit Aircraft Profile' }}
         />
         <Stack.Screen
           name="TimelineEntryDetail"

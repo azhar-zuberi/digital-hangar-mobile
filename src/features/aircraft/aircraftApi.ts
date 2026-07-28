@@ -104,6 +104,64 @@ export async function fetchOwnedAircraft(userId: string): Promise<AircraftSummar
     .filter((row): row is AircraftSummary => row != null);
 }
 
+// Backs the optional-fields edit form (issue #37): the current values of
+// exactly the columns that form edits. Deliberately narrower than a plain
+// `select('*')` for the same reason AIRCRAFT_SUMMARY_COLUMNS is narrow — it
+// keeps this query's shape obviously tied to what the edit form can touch,
+// and matches AircraftEditableValues in aircraftEditValidation.ts
+// field-for-field. Same `can_view_aircraft()` RLS as fetchAircraftById; in
+// practice this is only ever called with an aircraft the caller is already a
+// member of (reached from Home's "Edit Profile" button), so a `null` result
+// here is defensive, not an expected path.
+export type AircraftEditableFields = Pick<
+  Tables<'aircraft'>,
+  'id' | 'nickname' | 'year' | 'serial_number' | 'engine_information' | 'home_airport'
+>;
+
+const AIRCRAFT_EDITABLE_COLUMNS =
+  'id, nickname, year, serial_number, engine_information, home_airport';
+
+export async function fetchAircraftEditableFields(
+  aircraftId: string,
+): Promise<AircraftEditableFields | null> {
+  const { data, error } = await supabase
+    .from('aircraft')
+    .select(AIRCRAFT_EDITABLE_COLUMNS)
+    .eq('id', aircraftId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+export type UpdateAircraftFieldsInput = Partial<
+  Pick<
+    Tables<'aircraft'>,
+    'nickname' | 'year' | 'serial_number' | 'engine_information' | 'home_airport'
+  >
+>;
+
+// Plain table update, allowed by the pre-existing
+// `aircraft_update_verified_owner` RLS policy (`is_verified_owner(id)`) —
+// see supabase/migrations/20260726190000_create_aircraft_and_communities.sql.
+// Only a verified owner can reach this: Home's "Edit Profile" button is only
+// ever shown for the signed-in user's own owned aircraft.
+export async function updateAircraftFields(
+  aircraftId: string,
+  fields: UpdateAircraftFieldsInput,
+): Promise<AircraftEditableFields> {
+  const { data, error } = await supabase
+    .from('aircraft')
+    .update(fields)
+    .eq('id', aircraftId)
+    .select(AIRCRAFT_EDITABLE_COLUMNS)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) throw new Error('Aircraft update did not return a row.');
+  return data;
+}
+
 // The single signal behind the Home gating guard (issue #11): does the
 // signed-in user have at least one `aircraft_memberships` row (owner,
 // co-owner, or caretaker), regardless of relationship or verified status?

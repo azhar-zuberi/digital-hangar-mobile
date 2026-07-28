@@ -17,6 +17,14 @@ import type { RootStackParamList } from '../navigation/types';
 // see #35's "Blocks" notes. The former placeholder copy ("Your aircraft's
 // digital home is on its way") is gone now that there's real content.
 //
+// "Edit Profile" (issue #37) is this screen's UI entry point into the
+// optional-fields progressive-disclosure edit form — #35 didn't build one,
+// and #37's acceptance criteria left the choice of entry point to whoever
+// implemented it. Placed as a plain, non-competing secondary action right
+// under the identity block: reachable anytime, never forced, per the
+// "progressive disclosure" / "don't force" principle in
+// IMPLEMENTATION_SPEC.md §2 step 3.
+//
 // By the time this screen mounts, issue #11's gate (RootNavigator.tsx) has
 // already confirmed the signed-in user has at least one aircraft
 // membership, so the "no aircraft" fallback below is defensive (a race with
@@ -79,6 +87,17 @@ export function HomeScreen({ navigation }: Props) {
         />
       ) : null}
 
+      <Pressable
+        onPress={() =>
+          navigation.navigate('EditAircraftProfile', { aircraftId: selectedAircraft.id })
+        }
+        style={styles.editProfile}
+        accessibilityRole="button"
+        accessibilityLabel="Edit aircraft profile"
+      >
+        <Text style={styles.editProfileText}>Edit Profile</Text>
+      </Pressable>
+
       <Pressable onPress={() => navigation.navigate('Hangar')} style={styles.enter}>
         <Text style={styles.enterText}>Enter the Hangar</Text>
       </Pressable>
@@ -108,6 +127,17 @@ const styles = StyleSheet.create({
     fontSize: typography.body.size,
     color: colors.graphite60,
     textAlign: 'center',
+  },
+  editProfile: {
+    marginTop: spacing.lg,
+    marginHorizontal: spacing.xl,
+    alignSelf: 'flex-start',
+    paddingVertical: spacing.xs,
+  },
+  editProfileText: {
+    fontSize: typography.caption.size,
+    fontWeight: '600',
+    color: colors.brass,
   },
   enter: {
     marginTop: spacing.xxl,
