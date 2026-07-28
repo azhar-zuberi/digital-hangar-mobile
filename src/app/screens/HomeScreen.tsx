@@ -6,15 +6,19 @@ import { AircraftIdentityBlock } from '../../components/AircraftIdentityBlock';
 import { AircraftSwitcher } from '../../components/AircraftSwitcher';
 import { useSelectedAircraft } from '../../features/aircraft/useSelectedAircraft';
 import { signOut } from '../../features/auth/signOut';
+import { RecentHangarActivity } from '../../features/home/components/RecentHangarActivity';
+import type { HangarActivityItem } from '../../features/home/hangarActivity';
+import { useRecentHangarActivity } from '../../features/home/useRecentHangarActivity';
 import { colors, radii, spacing, typography } from '../../utils/tokens';
 import type { RootStackParamList } from '../navigation/types';
 
 // Home ("My Digital Hangar") — the entry point above the Story/Care/Fly tab
 // navigator (IMPLEMENTATION_SPEC.md §2). Issue #35 builds the hero photo,
 // identity block, and aircraft switcher described in §2 items 1, 2, and 5;
-// Ownership Snapshot (Phase 4, needs the `aircraft_flight_stats` view) and
-// Recent Hangar Activity (issue #38) are deliberately not built here yet —
-// see #35's "Blocks" notes. The former placeholder copy ("Your aircraft's
+// issue #38 adds Recent Hangar Activity (item 4, timeline slice only —
+// squawks/flights are Phase 3/4). Ownership Snapshot (Phase 4, needs the
+// `aircraft_flight_stats` view) is still deliberately not built here — see
+// #35's "Blocks" notes. The former placeholder copy ("Your aircraft's
 // digital home is on its way") is gone now that there's real content.
 //
 // "Edit Profile" (issue #37) is this screen's UI entry point into the
@@ -36,11 +40,30 @@ export function HomeScreen({ navigation }: Props) {
   const { ownedAircraft, selectedAircraft, selectAircraft, isLoading, isError } =
     useSelectedAircraft();
 
+  const {
+    timelineItems,
+    isLoading: isLoadingActivity,
+    isError: isActivityError,
+  } = useRecentHangarActivity(selectedAircraft?.id);
+
   const handleSignOut = () => {
     // Best-effort: signOut() clears the local Supabase session either way,
     // so there's nothing actionable to surface if the network call fails.
     signOut().catch(() => {});
   };
+
+  // Only `kind: 'timeline'` items exist in Phase 2 — see
+  // useRecentHangarActivity.ts's TODOs for the Phase 3/4 squawk/flight
+  // slices this will grow branches for.
+  function handlePressActivityItem(item: HangarActivityItem) {
+    if (item.kind === 'timeline') {
+      navigation.navigate('TimelineEntryDetail', { entryId: item.id });
+    }
+    // TODO(Phase 3): item.kind === 'squawk' -> navigate to the Care tab's
+    // squawk detail view.
+    // TODO(Phase 4): item.kind === 'flight' -> navigate to the Fly tab's
+    // flight detail view.
+  }
 
   if (isLoading) {
     return (
@@ -74,6 +97,13 @@ export function HomeScreen({ navigation }: Props) {
         manufacturer={selectedAircraft.manufacturer}
         model={selectedAircraft.model}
         nickname={selectedAircraft.nickname}
+      />
+
+      <RecentHangarActivity
+        timelineItems={timelineItems}
+        isLoading={isLoadingActivity}
+        isError={isActivityError}
+        onPressItem={handlePressActivityItem}
       />
 
       {ownedAircraft.length > 1 ? (
