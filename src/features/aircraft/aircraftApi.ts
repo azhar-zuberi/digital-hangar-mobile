@@ -64,6 +64,46 @@ export async function fetchAircraftById(aircraftId: string): Promise<AircraftSum
   return data;
 }
 
+// Backs the Home screen's hero content (issue #35): every aircraft the
+// signed-in user is a member of (owner, co-owner, or caretaker), regardless
+// of that aircraft's `visibility` — a member always sees their own
+// aircraft's full profile, per `can_view_aircraft()`'s `is_aircraft_member`
+// fallback (supabase/migrations/20260726190000_create_aircraft_and_
+// communities.sql), independent of the Private/Community/Public setting.
+// This is deliberately two queries rather than one embedded
+// (`aircraft_memberships` -> `aircraft`) select: it keeps both RLS policies
+// doing exactly the filtering they're already responsible for
+// (`aircraft_memberships_select` scopes the membership rows to the caller;
+// `aircraft_select_can_view` scopes which aircraft rows come back) without
+// leaning on supabase-js's embedded-resource type inference for a shape this
+// small. Order is preserved from `aircraft_memberships.created_at` (oldest
+// membership first) — the aircraft switcher's "first owned aircraft" default
+// (see useSelectedAircraft.ts) depends on that being deterministic.
+export async function fetchOwnedAircraft(userId: string): Promise<AircraftSummary[]> {
+  const { data: memberships, error: membershipError } = await supabase
+    .from('aircraft_memberships')
+    .select('aircraft_id')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true });
+
+  if (membershipError) throw membershipError;
+
+  const aircraftIds = (memberships ?? []).map((membership) => membership.aircraft_id);
+  if (aircraftIds.length === 0) return [];
+
+  const { data: aircraft, error: aircraftError } = await supabase
+    .from('aircraft')
+    .select(AIRCRAFT_SUMMARY_COLUMNS)
+    .in('id', aircraftIds);
+
+  if (aircraftError) throw aircraftError;
+
+  const aircraftById = new Map((aircraft ?? []).map((row) => [row.id, row]));
+  return aircraftIds
+    .map((id) => aircraftById.get(id))
+    .filter((row): row is AircraftSummary => row != null);
+}
+
 // The single signal behind the Home gating guard (issue #11): does the
 // signed-in user have at least one `aircraft_memberships` row (owner,
 // co-owner, or caretaker), regardless of relationship or verified status?
