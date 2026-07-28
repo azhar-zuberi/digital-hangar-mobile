@@ -31,6 +31,13 @@ export type HangarTabParamList = {
 // the tab bar the same way AircraftProfile/AddAircraft do — reached from
 // StoryScreen via `navigation.getParent()?.navigate(...)`, same pattern as
 // HomeHeaderButton's `getParent()?.goBack()`.
+//
+// EditAircraftProfile (issue #37) is the progressive-disclosure optional-
+// fields edit form (nickname, year, serial number, engine info, home
+// airport), reached from Home's "Edit Profile" button — see HomeScreen.tsx.
+// It's deliberately a separate route from `AircraftProfile`: that screen is
+// the read-only Community/Public browsing view from issue #26 (someone
+// else's aircraft), not an editable view of the signed-in owner's own.
 export type RootStackParamList = {
   Home: undefined;
   Hangar: NavigatorScreenParams<HangarTabParamList> | undefined;
@@ -38,6 +45,7 @@ export type RootStackParamList = {
   AddAircraft: undefined;
   FindAircraft: undefined;
   AircraftProfile: { aircraftId: string };
+  EditAircraftProfile: { aircraftId: string };
   TimelineEntryDetail: { entryId: string };
   AddTimelineEntry: { aircraftId: string };
 };

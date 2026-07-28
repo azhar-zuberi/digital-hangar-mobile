@@ -1,5 +1,9 @@
 import { supabase } from '../../../services/supabaseClient';
-import { fetchOwnedAircraft } from '../aircraftApi';
+import {
+  fetchAircraftEditableFields,
+  fetchOwnedAircraft,
+  updateAircraftFields,
+} from '../aircraftApi';
 
 jest.mock('../../../services/supabaseClient', () => ({
   supabase: { from: jest.fn() },
@@ -18,6 +22,8 @@ function queryBuilder(result: { data: unknown; error: unknown }) {
     eq: jest.fn(() => builder),
     order: jest.fn(() => builder),
     in: jest.fn(() => builder),
+    update: jest.fn(() => builder),
+    maybeSingle: jest.fn(() => Promise.resolve(result)),
     then: (resolve: (value: typeof result) => void) => resolve(result),
   };
   return builder;
@@ -96,5 +102,89 @@ describe('fetchOwnedAircraft', () => {
     mockedFrom.mockImplementation(() => membershipsBuilder);
 
     await expect(fetchOwnedAircraft('user-1')).rejects.toThrow('boom');
+  });
+});
+
+// Backs the optional-fields edit form (issue #37).
+describe('fetchAircraftEditableFields', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('fetches the editable columns for one aircraft by id', async () => {
+    const row = {
+      id: 'aircraft-1',
+      nickname: 'Bluebird',
+      year: 1979,
+      serial_number: '28-7405136',
+      engine_information: 'Lycoming O-235-C1',
+      home_airport: 'KJFK',
+    };
+    const builder = queryBuilder({ data: row, error: null });
+    mockedFrom.mockReturnValue(builder);
+
+    const result = await fetchAircraftEditableFields('aircraft-1');
+
+    expect(mockedFrom).toHaveBeenCalledWith('aircraft');
+    expect(builder.eq).toHaveBeenCalledWith('id', 'aircraft-1');
+    expect(result).toEqual(row);
+  });
+
+  it('returns null when RLS hides the row (defensive — not an expected path)', async () => {
+    const builder = queryBuilder({ data: null, error: null });
+    mockedFrom.mockReturnValue(builder);
+
+    const result = await fetchAircraftEditableFields('aircraft-1');
+
+    expect(result).toBeNull();
+  });
+
+  it('throws on a query error', async () => {
+    const builder = queryBuilder({ data: null, error: new Error('boom') });
+    mockedFrom.mockReturnValue(builder);
+
+    await expect(fetchAircraftEditableFields('aircraft-1')).rejects.toThrow('boom');
+  });
+});
+
+describe('updateAircraftFields', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('updates only the given fields and returns the updated row', async () => {
+    const updated = {
+      id: 'aircraft-1',
+      nickname: 'Skybird',
+      year: 1979,
+      serial_number: null,
+      engine_information: null,
+      home_airport: null,
+    };
+    const builder = queryBuilder({ data: updated, error: null });
+    mockedFrom.mockReturnValue(builder);
+
+    const result = await updateAircraftFields('aircraft-1', { nickname: 'Skybird' });
+
+    expect(mockedFrom).toHaveBeenCalledWith('aircraft');
+    expect(builder.update).toHaveBeenCalledWith({ nickname: 'Skybird' });
+    expect(builder.eq).toHaveBeenCalledWith('id', 'aircraft-1');
+    expect(result).toEqual(updated);
+  });
+
+  it('throws on a query error', async () => {
+    const builder = queryBuilder({ data: null, error: new Error('boom') });
+    mockedFrom.mockReturnValue(builder);
+
+    await expect(updateAircraftFields('aircraft-1', { nickname: 'x' })).rejects.toThrow('boom');
+  });
+
+  it('throws when the update returns no row', async () => {
+    const builder = queryBuilder({ data: null, error: null });
+    mockedFrom.mockReturnValue(builder);
+
+    await expect(updateAircraftFields('aircraft-1', { nickname: 'x' })).rejects.toThrow(
+      'Aircraft update did not return a row.',
+    );
   });
 });
