@@ -5,6 +5,7 @@ import { colors, typography } from '../../utils/tokens';
 import { CareScreen } from '../screens/CareScreen';
 import { FlyScreen } from '../screens/FlyScreen';
 import { StoryScreen } from '../screens/StoryScreen';
+import { AddTimelineEntryHeaderButton } from './AddTimelineEntryHeaderButton';
 import { HomeHeaderButton } from './HomeHeaderButton';
 import type { HangarTabParamList } from './types';
 
@@ -14,8 +15,8 @@ const Tab = createBottomTabNavigator<HangarTabParamList>();
 // Story (memories/milestones), Care (maintenance/squawks/reminders), Fly
 // (flights/hours/routes). Community is deliberately not a fourth tab here —
 // its placement is TBD per IMPLEMENTATION_SPEC.md §2, out of scope until
-// Phase 5 (#16). Each screen is a placeholder; real content ships in
-// Phases 2-4 (#13, #14, #15).
+// Phase 5 (#16). Story has real content as of issue #36; Care and Fly
+// remain placeholders until Phases 3-4.
 export function HangarTabs() {
   return (
     <Tab.Navigator
@@ -41,6 +42,7 @@ export function HangarTabs() {
           tabBarIcon: ({ color, size }) => (
             <IconSymbol name="book.closed" size={size} color={color} fallback="📖" />
           ),
+          headerRight: () => <AddTimelineEntryHeaderButton />,
         }}
       />
       <Tab.Screen
