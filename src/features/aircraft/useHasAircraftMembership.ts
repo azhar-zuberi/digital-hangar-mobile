@@ -1,6 +1,6 @@
+import { useAuth } from '@clerk/expo';
 import { useQuery } from '@tanstack/react-query';
 
-import { useSession } from '../auth/session';
 import { fetchHasAircraftMembership } from './aircraftApi';
 
 // Base query key for "does this user have an aircraft_memberships row"
@@ -26,8 +26,7 @@ export const AIRCRAFT_MEMBERSHIP_QUERY_KEY = ['aircraftMemberships'] as const;
  * already be defined by the time this runs.
  */
 export function useHasAircraftMembership() {
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: [...AIRCRAFT_MEMBERSHIP_QUERY_KEY, userId ?? null],

@@ -1,3 +1,6 @@
+// LEGACY (pre-Clerk-migration): superseded by ../authErrors.ts (Clerk-backed).
+// Kept unwired for rollback until the Clerk path is verified end-to-end and
+// Phase 7 cleanup is explicitly approved — see docs/clerk-migration-plan.md.
 import { isAuthApiError, isAuthRetryableFetchError } from '@supabase/supabase-js';
 
 // Calm, non-alarming copy for sign-in failure states, per docs/BRAND.md §17

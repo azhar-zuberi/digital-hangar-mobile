@@ -1,8 +1,12 @@
+// LEGACY (pre-Clerk-migration): superseded by @clerk/expo's useAuth() directly
+// in App.tsx. Kept unwired for rollback until the Clerk path is verified
+// end-to-end and Phase 7 cleanup is explicitly approved — see
+// docs/clerk-migration-plan.md.
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Session } from '@supabase/supabase-js';
 
-import { supabase } from '../../services/supabaseClient';
+import { supabase } from '../../../services/supabaseClient';
 
 // The current Supabase Auth session, modeled as TanStack Query state (per
 // CLAUDE.md — TanStack Query + Supabase client for all server state, no

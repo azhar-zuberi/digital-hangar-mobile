@@ -47,8 +47,8 @@ export function HomeScreen({ navigation }: Props) {
   } = useRecentHangarActivity(selectedAircraft?.id);
 
   const handleSignOut = () => {
-    // Best-effort: signOut() clears the local Supabase session either way,
-    // so there's nothing actionable to surface if the network call fails.
+    // Best-effort: signOut() clears the local Clerk session either way, so
+    // there's nothing actionable to surface if the network call fails.
     signOut().catch(() => {});
   };
 

@@ -1,3 +1,7 @@
+// LEGACY (pre-Clerk-migration): superseded by ../useSocialSignIn.ts (Clerk-
+// backed). Kept unwired for rollback until the Clerk path is verified
+// end-to-end and Phase 7 cleanup is explicitly approved — see
+// docs/clerk-migration-plan.md.
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { signInWithApple } from './appleSignIn';

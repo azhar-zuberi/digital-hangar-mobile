@@ -1,3 +1,6 @@
+// LEGACY (pre-Clerk-migration): only used by ./appleSignIn.ts. Kept unwired
+// for rollback until the Clerk path is verified end-to-end and Phase 7
+// cleanup is explicitly approved — see docs/clerk-migration-plan.md.
 import * as Crypto from 'expo-crypto';
 
 // Nonce helper for the Apple sign-in flow (see appleSignIn.ts).

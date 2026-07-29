@@ -1,5 +1,5 @@
 import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getClerkInstance } from '@clerk/expo';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../models/database.types';
 
@@ -38,11 +38,20 @@ export const supabase = createClient<Database>(
   supabaseUrl ?? FALLBACK_SUPABASE_URL,
   supabaseAnonKey ?? FALLBACK_SUPABASE_ANON_KEY,
   {
-    auth: {
-      storage: AsyncStorage,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
+    // Clerk is the identity provider now (see docs/clerk-migration-plan.md) —
+    // Supabase's own Auth session/storage is no longer used here; Supabase
+    // validates Clerk's session token directly via Third-Party Auth (JWKS),
+    // configured in the Supabase dashboard and supabase/config.toml, not in
+    // this client. getClerkInstance() with no arguments (rather than passing
+    // a publishableKey here too) returns the same singleton <ClerkProvider>
+    // already initialized in App.tsx — calling it with a fallback key here
+    // instead risks reinitializing/resetting that singleton if this ever ran
+    // before the provider mounted. It's called fresh on every request
+    // (rather than capturing a session reference once) so a request always
+    // gets a current, auto-refreshed token from Clerk's own token cache.
+    accessToken: async () => {
+      const { session } = getClerkInstance();
+      return (await session?.getToken()) ?? null;
     },
   },
 );

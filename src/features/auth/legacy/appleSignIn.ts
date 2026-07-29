@@ -1,6 +1,9 @@
+// LEGACY (pre-Clerk-migration): superseded by ../useSocialSignIn.ts. Kept
+// unwired for rollback until the Clerk path is verified end-to-end and
+// Phase 7 cleanup is explicitly approved — see docs/clerk-migration-plan.md.
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-import { supabase } from '../../services/supabaseClient';
+import { supabase } from '../../../services/supabaseClient';
 import { generateNoncePair } from './nonce';
 
 // Sign in with Apple via expo-apple-authentication + Supabase Auth.

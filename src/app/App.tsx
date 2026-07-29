@@ -1,27 +1,45 @@
+import { ClerkProvider, useAuth } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { useSession } from '../features/auth/session';
 import { queryClient } from '../services/queryClient';
 import { colors } from '../utils/tokens';
 import { RootNavigator } from './navigation/RootNavigator';
 import { SignInScreen } from './screens/SignInScreen';
 
-// Root component. Wires up app-wide providers — TanStack Query for server
-// state (IMPLEMENTATION_SPEC.md §4) and react-native-safe-area-context for
+// Values come from the environment, never hardcoded — see .env.example.
+// Warn-not-throw on a missing key mirrors src/services/supabaseClient.ts's
+// precedent, so `npm test`/CI (no .env, which is gitignored) and a bare
+// `expo start --web` preview can still boot; a real sign-in attempt without
+// a real key fails loudly from ClerkProvider/Clerk's API instead.
+const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+if (!clerkPublishableKey) {
+  console.warn(
+    'Clerk publishable key is not set. Copy .env.example to .env and fill in your Clerk project credentials.',
+  );
+}
+
+// Root component. Wires up app-wide providers — Clerk for identity (see
+// docs/clerk-migration-plan.md; Supabase remains the database/storage/RLS
+// layer, see src/services/supabaseClient.ts), TanStack Query for server
+// state (IMPLEMENTATION_SPEC.md §4), and react-native-safe-area-context for
 // the nav shell (issue #10) — and gates between the sign-in screen
 // (issues #3/#4) and the Home / Story / Care / Fly nav shell based on
-// whether a Supabase Auth session exists.
+// whether a Clerk session exists.
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <RootGate />
-        <StatusBar style="dark" />
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <ClerkProvider publishableKey={clerkPublishableKey ?? ''} tokenCache={tokenCache}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <RootGate />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </ClerkProvider>
   );
 }
 
@@ -32,13 +50,13 @@ export default function App() {
 const SKIP_AUTH_FOR_DEV = __DEV__ && process.env.EXPO_PUBLIC_SKIP_AUTH === '1';
 
 function RootGate() {
-  const { data: session, isLoading } = useSession();
+  const { isLoaded, isSignedIn } = useAuth();
 
   if (SKIP_AUTH_FOR_DEV) {
     return <RootNavigator />;
   }
 
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator color={colors.brass} />
@@ -46,7 +64,7 @@ function RootGate() {
     );
   }
 
-  return session ? <RootNavigator /> : <SignInScreen />;
+  return isSignedIn ? <RootNavigator /> : <SignInScreen />;
 }
 
 const styles = StyleSheet.create({

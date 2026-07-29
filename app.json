@@ -21,7 +21,9 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,7 +49,10 @@
           "photosPermission": "Digital Hangar uses your photos to add a picture of your aircraft.",
           "cameraPermission": "Digital Hangar uses your camera to take a picture of your aircraft."
         }
-      ]
+      ],
+      "@clerk/expo",
+      "@clerk/expo-google-signin",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

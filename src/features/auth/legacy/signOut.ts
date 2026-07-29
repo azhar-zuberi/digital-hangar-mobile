@@ -1,4 +1,7 @@
-import { supabase } from '../../services/supabaseClient';
+// LEGACY (pre-Clerk-migration): superseded by ../signOut.ts (Clerk-backed).
+// Kept unwired for rollback until the Clerk path is verified end-to-end and
+// Phase 7 cleanup is explicitly approved — see docs/clerk-migration-plan.md.
+import { supabase } from '../../../services/supabaseClient';
 
 // Single sign-out path for every provider. Supabase Auth owns the session
 // regardless of whether it was created via Apple or Google, so there is
