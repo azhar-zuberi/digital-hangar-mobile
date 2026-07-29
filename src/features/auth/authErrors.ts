@@ -1,38 +1,28 @@
-import { isAuthApiError, isAuthRetryableFetchError } from '@supabase/supabase-js';
+import { isClerkAPIResponseError } from '@clerk/expo';
 
 // Calm, non-alarming copy for sign-in failure states, per docs/BRAND.md §17
 // (Voice and Messaging) — no "Error:", no exclamation marks, nothing that
-// reads as the app being broken. A cancelled sign-in isn't a failure at all,
-// so it gets no banner — the person just lands back on the sign-in screen.
-export type AuthErrorReason = 'cancelled' | 'network' | 'provider';
+// reads as the app being broken.
+//
+// No 'cancelled' reason here (unlike the legacy Supabase-Auth version in
+// ../legacy/authErrors.ts): Clerk's useSignInWithApple/useSignInWithGoogle
+// hooks (see useSocialSignIn.ts) swallow the platform cancellation codes
+// (ERR_REQUEST_CANCELED on Apple, SIGN_IN_CANCELLED on Google) internally and
+// resolve with a null createdSessionId instead of throwing — so a cancelled
+// sign-in never reaches classifyAuthError at all.
+export type AuthErrorReason = 'network' | 'provider';
 
-export const AUTH_ERROR_COPY: Record<Exclude<AuthErrorReason, 'cancelled'>, string> = {
+export const AUTH_ERROR_COPY: Record<AuthErrorReason, string> = {
   network: "Couldn't reach Digital Hangar just now. Check your connection and try again.",
   provider: "That didn't go through. Give it another try in a moment.",
 };
 
-/**
- * Recognizes "the person tapped cancel" for the Apple flow, which rejects
- * with this code. (The Google flow never throws on cancel — signInWithGoogle
- * resolves with `'cancelled'` instead — so useSocialSignIn.ts never needs to
- * classify a Google cancellation as an error in the first place.)
- */
-function isCancellation(error: unknown): boolean {
-  if (!error || typeof error !== 'object') return false;
-  const code = 'code' in error ? String((error as { code?: unknown }).code) : undefined;
-  return code === 'ERR_REQUEST_CANCELED';
-}
-
 export function classifyAuthError(error: unknown): AuthErrorReason {
-  if (isCancellation(error)) return 'cancelled';
-
-  if (isAuthRetryableFetchError(error)) return 'network';
-
   if (error instanceof Error && /network|fetch|offline/i.test(error.message)) {
     return 'network';
   }
 
-  if (isAuthApiError(error)) return 'provider';
+  if (isClerkAPIResponseError(error)) return 'provider';
 
   return 'provider';
 }

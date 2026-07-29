@@ -1,6 +1,6 @@
+import { useAuth } from '@clerk/expo';
 import { useQuery } from '@tanstack/react-query';
 
-import { useSession } from '../auth/session';
 import { fetchOwnedAircraft } from './aircraftApi';
 
 // Base query key for "every aircraft this user is a member of" queries.
@@ -18,8 +18,7 @@ export const OWNED_AIRCRAFT_QUERY_KEY = ['ownedAircraft'] as const;
  * useHasAircraftMembership.ts. Disabled until a session exists.
  */
 export function useOwnedAircraft() {
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: [...OWNED_AIRCRAFT_QUERY_KEY, userId ?? null],

@@ -47,7 +47,10 @@
           "photosPermission": "Digital Hangar uses your photos to add a picture of your aircraft.",
           "cameraPermission": "Digital Hangar uses your camera to take a picture of your aircraft."
         }
-      ]
+      ],
+      "@clerk/expo",
+      "@clerk/expo-google-signin",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

@@ -1,6 +1,9 @@
+// LEGACY (pre-Clerk-migration): superseded by ../useSocialSignIn.ts. Kept
+// unwired for rollback until the Clerk path is verified end-to-end and
+// Phase 7 cleanup is explicitly approved — see docs/clerk-migration-plan.md.
 import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
 
-import { supabase } from '../../services/supabaseClient';
+import { supabase } from '../../../services/supabaseClient';
 
 // Sign in with Google via @react-native-google-signin/google-signin +
 // Supabase Auth. Google Cloud OAuth client + Supabase provider config were

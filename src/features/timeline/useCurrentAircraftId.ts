@@ -1,7 +1,7 @@
+import { useAuth } from '@clerk/expo';
 import { useQuery } from '@tanstack/react-query';
 
 import { supabase } from '../../services/supabaseClient';
-import { useSession } from '../auth/session';
 
 // Provisional "current aircraft" resolution for the Story tab (issue #36).
 //
@@ -39,8 +39,7 @@ async function fetchCurrentAircraftId(userId: string): Promise<string | null> {
 }
 
 export function useCurrentAircraftId() {
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: [...CURRENT_AIRCRAFT_QUERY_KEY, userId ?? null],

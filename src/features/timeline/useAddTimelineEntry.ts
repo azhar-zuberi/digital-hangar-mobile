@@ -1,3 +1,4 @@
+import { useAuth } from '@clerk/expo';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -6,7 +7,6 @@ import {
   UPLOAD_ERROR_COPY,
   uploadImage,
 } from '../../services/imageUpload';
-import { useSession } from '../auth/session';
 import {
   insertTimelineEntry,
   insertTimelinePhotos,
@@ -102,8 +102,7 @@ export async function createTimelineEntryWithPhotos(
  */
 export function useAddTimelineEntry(aircraftId: string) {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { userId } = useAuth();
 
   const mutation = useMutation({
     mutationFn: (input: AddTimelineEntryInput) => {

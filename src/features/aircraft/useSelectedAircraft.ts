@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '@clerk/expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useSession } from '../auth/session';
 import { resolveSelectedAircraftId } from './selectedAircraft';
 import { useOwnedAircraft } from './useOwnedAircraft';
 
@@ -34,8 +34,7 @@ type Hydration = typeof PENDING | { userId: string | null; value: string | null 
  * body itself (react-hooks/set-state-in-effect).
  */
 export function useSelectedAircraft() {
-  const { data: session } = useSession();
-  const userId = session?.user.id ?? null;
+  const { userId = null } = useAuth();
 
   const ownedAircraftQuery = useOwnedAircraft();
   const ownedAircraft = ownedAircraftQuery.data ?? [];

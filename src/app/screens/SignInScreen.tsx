@@ -9,9 +9,11 @@ const BUTTON_WIDTH = 312;
 const BUTTON_HEIGHT = 48;
 
 // Onboarding step 1 per IMPLEMENTATION_SPEC.md §2: "Launch → Sign in with
-// Apple / Google (Supabase Auth)." The choice screen ("Add My Aircraft" /
-// "Find an Aircraft") that follows a first sign-in is a separate, later
-// Phase 1 issue — this screen's only job is producing a Supabase session.
+// Apple / Google." Identity is provided by Clerk (see
+// docs/clerk-migration-plan.md); Supabase remains the database/storage/RLS
+// layer. The choice screen ("Add My Aircraft" / "Find an Aircraft") that
+// follows a first sign-in is a separate, later Phase 1 issue — this screen's
+// only job is producing a Clerk session.
 export function SignInScreen() {
   const { signIn, isSigningIn, pendingProvider, errorMessage } = useSocialSignIn();
 
