@@ -365,10 +365,13 @@ enabled = false
 [auth.third_party.clerk]
 enabled = true
 # From the Clerk Dashboard's "Connect with Supabase" setup
-# (https://dashboard.clerk.com/setup/supabase) — CHANGE_ME is a placeholder,
-# not a real domain; local `supabase start` auth will fail to validate tokens
-# until this is replaced with the real per-project Clerk Frontend API domain.
-domain = "CHANGE_ME.clerk.accounts.dev"
+# (https://dashboard.clerk.com/setup/supabase) — "placeholder" below is a
+# stand-in, not a real domain; local `supabase start` auth will fail to
+# validate tokens until this is replaced with the real per-project Clerk
+# Frontend API domain (Supabase's config.toml parser requires a
+# hostname-shaped value here, so it can't be left obviously-fake like
+# CHANGE_ME).
+domain = "placeholder.clerk.accounts.dev"
 
 # OAuth server configuration
 [auth.oauth_server]
