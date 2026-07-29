@@ -1,10 +1,11 @@
-import { ClerkProvider, useAuth } from '@clerk/expo';
+import { ClerkProvider, useAuth, useUser } from '@clerk/expo';
 import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useEnsureUserProfile } from '../features/auth/useEnsureUserProfile';
 import { queryClient } from '../services/queryClient';
 import { colors } from '../utils/tokens';
 import { RootNavigator } from './navigation/RootNavigator';
@@ -51,6 +52,9 @@ const SKIP_AUTH_FOR_DEV = __DEV__ && process.env.EXPO_PUBLIC_SKIP_AUTH === '1';
 
 function RootGate() {
   const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
+  // Only enabled once signed in, so this never fires for a signed-out user.
+  const ensureProfile = useEnsureUserProfile(isSignedIn ? user : null);
 
   if (SKIP_AUTH_FOR_DEV) {
     return <RootNavigator />;
@@ -64,7 +68,25 @@ function RootGate() {
     );
   }
 
-  return isSignedIn ? <RootNavigator /> : <SignInScreen />;
+  if (!isSignedIn) {
+    return <SignInScreen />;
+  }
+
+  // Screens behind this assume a public.users row exists for the current
+  // user (see ensureUserProfile.ts) — wait for it before rendering them.
+  // Fail open on error rather than trap the user on an infinite spinner if
+  // the upsert can't complete (e.g. no network on first launch); most of
+  // the app still works without a profile row, only aircraft/timeline
+  // creation would fail loudly on their own foreign-key check.
+  if (ensureProfile.isPending) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.brass} />
+      </View>
+    );
+  }
+
+  return <RootNavigator />;
 }
 
 const styles = StyleSheet.create({
