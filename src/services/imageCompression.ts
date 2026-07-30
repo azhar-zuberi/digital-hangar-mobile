@@ -1,6 +1,6 @@
 import { File } from 'expo-file-system';
 import { ImageManipulator, SaveFormat, type ImageResult } from 'expo-image-manipulator';
-import { Image } from 'react-native';
+import { Image, Platform } from 'react-native';
 
 // Client-side resize/compress pipeline, per docs/IMPLEMENTATION_SPEC.md §4
 // ("Remaining Implementation Choices" — image pipeline) and CLAUDE.md's tech
@@ -35,6 +35,22 @@ export type CompressedImage = {
   height: number;
 };
 
+// expo-file-system's File class (used below for the native size pre-check)
+// is explicitly unsupported on web — its web shim is a no-op stub that never
+// populates `.exists`/`.size` (see expo-file-system's ExpoFileSystem.web.ts).
+// expo-image-picker's web implementation hands back a blob: URI instead of a
+// file:// one anyway, so refetching it as a Blob is the web-native way to
+// get its byte size.
+async function getSourceFileSize(sourceUri: string): Promise<number | null> {
+  if (Platform.OS === 'web') {
+    const blob = await fetch(sourceUri).then((response) => response.blob());
+    return blob.size;
+  }
+
+  const sourceFile = new File(sourceUri);
+  return sourceFile.exists ? sourceFile.size : null;
+}
+
 function getImageSize(uri: string): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     Image.getSize(
@@ -57,8 +73,8 @@ function getImageSize(uri: string): Promise<{ width: number; height: number }> {
  * attempted.
  */
 export async function compressImageForUpload(sourceUri: string): Promise<CompressedImage> {
-  const sourceFile = new File(sourceUri);
-  if (sourceFile.exists && sourceFile.size > MAX_SOURCE_FILE_BYTES) {
+  const sourceSize = await getSourceFileSize(sourceUri);
+  if (sourceSize !== null && sourceSize > MAX_SOURCE_FILE_BYTES) {
     throw new OversizedImageError();
   }
 
