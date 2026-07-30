@@ -102,7 +102,7 @@ export async function createTimelineEntryWithPhotos(
  */
 export function useAddTimelineEntry(aircraftId: string) {
   const queryClient = useQueryClient();
-  const { userId } = useAuth();
+  const { userId } = useAuth({ treatPendingAsSignedOut: false });
 
   const mutation = useMutation({
     mutationFn: (input: AddTimelineEntryInput) => {

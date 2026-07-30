@@ -34,7 +34,7 @@ type Hydration = typeof PENDING | { userId: string | null; value: string | null 
  * body itself (react-hooks/set-state-in-effect).
  */
 export function useSelectedAircraft() {
-  const { userId = null } = useAuth();
+  const { userId = null } = useAuth({ treatPendingAsSignedOut: false });
 
   const ownedAircraftQuery = useOwnedAircraft();
   const ownedAircraft = ownedAircraftQuery.data ?? [];

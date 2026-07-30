@@ -39,7 +39,7 @@ async function fetchCurrentAircraftId(userId: string): Promise<string | null> {
 }
 
 export function useCurrentAircraftId() {
-  const { userId } = useAuth();
+  const { userId } = useAuth({ treatPendingAsSignedOut: false });
 
   return useQuery({
     queryKey: [...CURRENT_AIRCRAFT_QUERY_KEY, userId ?? null],

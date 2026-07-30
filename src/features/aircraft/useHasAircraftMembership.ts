@@ -26,7 +26,7 @@ export const AIRCRAFT_MEMBERSHIP_QUERY_KEY = ['aircraftMemberships'] as const;
  * already be defined by the time this runs.
  */
 export function useHasAircraftMembership() {
-  const { userId } = useAuth();
+  const { userId } = useAuth({ treatPendingAsSignedOut: false });
 
   return useQuery({
     queryKey: [...AIRCRAFT_MEMBERSHIP_QUERY_KEY, userId ?? null],

@@ -18,7 +18,7 @@ export const OWNED_AIRCRAFT_QUERY_KEY = ['ownedAircraft'] as const;
  * useHasAircraftMembership.ts. Disabled until a session exists.
  */
 export function useOwnedAircraft() {
-  const { userId } = useAuth();
+  const { userId } = useAuth({ treatPendingAsSignedOut: false });
 
   return useQuery({
     queryKey: [...OWNED_AIRCRAFT_QUERY_KEY, userId ?? null],

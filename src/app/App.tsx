@@ -51,7 +51,12 @@ export default function App() {
 const SKIP_AUTH_FOR_DEV = __DEV__ && process.env.EXPO_PUBLIC_SKIP_AUTH === '1';
 
 function RootGate() {
-  const { isLoaded, isSignedIn } = useAuth();
+  // treatPendingAsSignedOut: false is required when using Clerk's native
+  // components (AuthView) — without it, a pending session task (e.g.
+  // mid-flow state AuthView manages internally) can read as signed-out here
+  // and bounce the user back to the sign-in screen. See
+  // https://clerk.com/docs/reference/expo/overview.
+  const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
   const { user } = useUser();
   // Only enabled once signed in, so this never fires for a signed-out user.
   const ensureProfile = useEnsureUserProfile(isSignedIn ? user : null);
