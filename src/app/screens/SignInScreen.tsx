@@ -1,12 +1,20 @@
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useSocialSignIn } from '../../features/auth/useSocialSignIn';
+import { useWebGoogleSignIn } from '../../features/auth/useWebGoogleSignIn';
 import { colors, radii, spacing, typography } from '../../utils/tokens';
 
 const BUTTON_WIDTH = 312;
 const BUTTON_HEIGHT = 48;
+
+// Dev/test-only: `@react-native-google-signin/google-signin`'s button has no
+// real web implementation (see google_signin_free_tier_limits memory), so
+// `expo start --web` gets a browser-OAuth stand-in instead (useWebGoogleSignIn.ts)
+// purely for exercising the real auth pipeline during development — never
+// true in a production build, regardless of platform.
+const IS_DEV_WEB_TEST_ENVIRONMENT = __DEV__ && Platform.OS === 'web';
 
 // Onboarding step 1 per IMPLEMENTATION_SPEC.md §2: "Launch → Sign in with
 // Apple / Google." Identity is provided by Clerk (see
@@ -16,6 +24,10 @@ const BUTTON_HEIGHT = 48;
 // only job is producing a Clerk session.
 export function SignInScreen() {
   const { signIn, isSigningIn, pendingProvider, errorMessage } = useSocialSignIn();
+  const webSignIn = useWebGoogleSignIn();
+
+  const isSigningInAny = isSigningIn || webSignIn.isSigningIn;
+  const combinedErrorMessage = errorMessage ?? webSignIn.errorMessage;
 
   return (
     <View style={styles.container}>
@@ -35,15 +47,25 @@ export function SignInScreen() {
           />
         )}
 
-        <GoogleSigninButton
-          size={GoogleSigninButton.Size.Wide}
-          color={GoogleSigninButton.Color.Light}
-          style={styles.button}
-          disabled={isSigningIn}
-          onPress={() => signIn('google')}
-        />
+        {IS_DEV_WEB_TEST_ENVIRONMENT ? (
+          <Pressable
+            style={styles.webTestButton}
+            disabled={webSignIn.isSigningIn}
+            onPress={() => webSignIn.signIn()}
+          >
+            <Text style={styles.webTestButtonText}>Continue with Google (browser test)</Text>
+          </Pressable>
+        ) : (
+          <GoogleSigninButton
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Light}
+            style={styles.button}
+            disabled={isSigningIn}
+            onPress={() => signIn('google')}
+          />
+        )}
 
-        {isSigningIn && (
+        {isSigningInAny && (
           <View style={styles.progressRow}>
             <ActivityIndicator color={colors.brass} />
             <Text style={styles.progressText}>
@@ -52,9 +74,9 @@ export function SignInScreen() {
           </View>
         )}
 
-        {errorMessage && (
+        {combinedErrorMessage && (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>{errorMessage}</Text>
+            <Text style={styles.errorText}>{combinedErrorMessage}</Text>
           </View>
         )}
       </View>
@@ -94,6 +116,19 @@ const styles = StyleSheet.create({
   button: {
     width: BUTTON_WIDTH,
     height: BUTTON_HEIGHT,
+  },
+  webTestButton: {
+    width: BUTTON_WIDTH,
+    height: BUTTON_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radii.control,
+    backgroundColor: colors.graphite,
+  },
+  webTestButtonText: {
+    fontSize: typography.body.size,
+    color: colors.ivory,
+    fontWeight: '600',
   },
   progressRow: {
     flexDirection: 'row',
