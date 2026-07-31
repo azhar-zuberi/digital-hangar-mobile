@@ -12,7 +12,7 @@ type Props = {
 // and §3 "Hero image treatment": full-bleed, 4:3 landscape, rounded top
 // corners only (20pt — `radii.hero`), soft low-opacity shadow beneath,
 // identity text placed below the image, never overlaid. Falls back to a
-// graphite/aluminum placeholder — never blank — when the aircraft has no
+// graphite/graphite12 placeholder — never blank — when the aircraft has no
 // `primary_photo_url` yet; the real empty state guiding an owner to add a
 // photo is onboarding's job (IMPLEMENTATION_SPEC.md §2 step 3), not this
 // display component's, per the issue's acceptance criteria.
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   shadowWrapper: {
     borderTopLeftRadius: radii.hero,
     borderTopRightRadius: radii.hero,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     // Minimal, low-opacity shadow per IMPLEMENTATION_SPEC.md §3
     // "Elevation" — soft, only on the hero card, no heavy drop shadows.
     shadowColor: colors.graphite,
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
   placeholder: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
 });

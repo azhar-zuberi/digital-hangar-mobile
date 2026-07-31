@@ -200,7 +200,7 @@ export function AddTimelineEntryScreen({ navigation, route }: Props) {
           accessibilityState={{ disabled: isSubmitting, busy: isSubmitting }}
         >
           {isSubmitting ? (
-            <ActivityIndicator color={colors.ivory} />
+            <ActivityIndicator color={colors.cloudWhite} />
           ) : (
             <Text style={styles.submitButtonText}>Save Entry</Text>
           )}
@@ -213,7 +213,7 @@ export function AddTimelineEntryScreen({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   container: {
     padding: spacing.xl,
@@ -230,23 +230,23 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     borderRadius: radii.control,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     fontSize: typography.body.size,
     color: colors.graphite,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   multilineInput: {
     minHeight: 96,
   },
   inputError: {
-    borderColor: colors.brass,
+    borderColor: colors.error,
   },
   errorText: {
     fontSize: typography.caption.size,
-    color: colors.brass,
+    color: colors.error,
     marginTop: spacing.xs,
   },
   errorBanner: {
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radii.card,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   errorBannerText: {
     fontSize: typography.caption.size,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   submitButton: {
-    backgroundColor: colors.brass,
+    backgroundColor: colors.aviationBlue,
     borderRadius: radii.control,
     paddingVertical: spacing.md,
     alignItems: 'center',
@@ -275,6 +275,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
 });

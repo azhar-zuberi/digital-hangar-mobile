@@ -18,13 +18,13 @@ import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// Shared header look for the onboarding/search screens below — same ivory
-// background + graphite title treatment as HangarTabs' tab header, so a
+// Shared header look for the onboarding/search screens below — same
+// Cloud White background + graphite title treatment as HangarTabs' tab header, so a
 // pushed screen with a native back button/gesture (issue #26's "back →
 // choice screen" flow) doesn't look like a different app.
 const subScreenHeaderOptions = {
   headerShown: true,
-  headerStyle: { backgroundColor: colors.ivory },
+  headerStyle: { backgroundColor: colors.cloudWhite },
   headerShadowVisible: false,
   headerTintColor: colors.graphite,
   headerTitleStyle: {
@@ -61,7 +61,7 @@ export function RootNavigator() {
   if (gate === 'loading') {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   // different loading states stitched together.
   loading: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
   },

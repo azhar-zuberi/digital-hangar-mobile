@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: radii.control,
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     overflow: 'hidden',
   },
   option: {
@@ -54,10 +54,10 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   optionSelected: {
-    backgroundColor: colors.brass,
+    backgroundColor: colors.skyBlue,
   },
   optionText: {
     fontSize: typography.body.size,
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
     color: colors.graphite,
   },
   optionTextSelected: {
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
 });

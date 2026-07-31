@@ -85,7 +85,7 @@ export function FindAircraftScreen({ navigation }: Props) {
         style={[styles.searchButton, !canSearch && styles.searchButtonDisabled]}
       >
         {isPending ? (
-          <ActivityIndicator color={colors.ivory} />
+          <ActivityIndicator color={colors.cloudWhite} />
         ) : (
           <Text style={styles.searchButtonText}>Search</Text>
         )}
@@ -109,7 +109,7 @@ export function FindAircraftScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.xxl,
   },
@@ -120,19 +120,19 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     borderRadius: radii.control,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     fontSize: typography.body.size,
     color: colors.graphite,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   searchButton: {
     marginTop: spacing.lg,
     paddingVertical: spacing.md,
     borderRadius: radii.control,
-    backgroundColor: colors.brass,
+    backgroundColor: colors.aviationBlue,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   searchButtonText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
   message: {
     marginTop: spacing.xl,

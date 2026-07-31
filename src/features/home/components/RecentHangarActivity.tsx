@@ -50,7 +50,7 @@ export function RecentHangarActivity({
       <Text style={styles.heading}>Recent Hangar Activity</Text>
 
       {isLoading ? (
-        <ActivityIndicator color={colors.brass} style={styles.centered} />
+        <ActivityIndicator color={colors.skyBlue} style={styles.centered} />
       ) : isError ? (
         <Text style={styles.message}>Recent activity couldn&apos;t load just now.</Text>
       ) : items.length === 0 ? (

@@ -61,10 +61,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   pillSelected: {
-    backgroundColor: colors.brass,
+    backgroundColor: colors.skyBlue,
   },
   pillText: {
     fontSize: typography.caption.size,
@@ -72,6 +72,6 @@ const styles = StyleSheet.create({
     color: colors.graphite,
   },
   pillTextSelected: {
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
 });

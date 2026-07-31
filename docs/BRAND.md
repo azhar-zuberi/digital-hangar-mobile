@@ -1,8 +1,10 @@
 # Digital Hangar
 ## Brand & Design Direction Document
 
-**Version:** 1.0
+**Version:** 1.1
 **Purpose:** Define the brand identity, visual direction, UX philosophy, and design principles for Digital Hangar.
+
+> Revision 1.1 updates the Color Direction (§14) to a blue and white palette and adds a new Sign-In Experience section (§22), replacing the warm ivory / aviation brass direction from v1.0 — kept in sync with `docs/brand-design-direction.md`, the source of record for this revision.
 
 ---
 
@@ -155,15 +157,23 @@ It should avoid: cockpit dashboards, instrument panels, aviation-themed UI patte
 
 ## 14. Color Direction
 
-**Warm Ivory** — background, clean canvas, aviation journal feel.
+> Updated in v1.1 — replaces the Warm Ivory / Aviation Brass palette with a blue and white direction. The interface should read as generous white negative space, anchored by aviation blue at key identity moments.
 
-**Graphite** — text, contrast, premium feel.
+**Aviation Blue** — `#042C53`. Primary brand anchor. Sign-in and hero moments. Depth, confidence, trust.
 
-**Aviation Brass** — highlights, milestones, important moments.
+**Sky Blue** — `#185FA5`. Interactive accents. Active states, links, icons. Tags and highlights.
 
-**Aircraft Aluminum** — supporting UI elements, dividers, subtle aviation references.
+**Cloud White** — `#FFFFFF`. Primary background. Clean canvas for content screens. Negative space that lets the aircraft and story breathe.
 
-> Concrete hex values proposed in `IMPLEMENTATION_SPEC.md` §3 — pending designer validation.
+**Graphite** — `#2C2C2A`. Text. Contrast. Premium feel.
+
+**Design Principle:** White space leads. Blue anchors.
+
+Content screens (feed, story, care, fly) should be predominantly white — the aircraft photo and story are the color. Aviation Blue is reserved for identity moments: sign-in, onboarding, navigation accents, and calls to action, so it reads as premium rather than heavy.
+
+Avoid tinting large content backgrounds in Aviation Blue; use it for anchors, not fills.
+
+> Concrete hex values (plus supporting neutral/error tones needed for implementation but not part of this four-color brand palette) are in `IMPLEMENTATION_SPEC.md` §3.
 
 ---
 
@@ -248,7 +258,24 @@ The first relationship is: Owner ↔ Aircraft.
 
 ---
 
-## 22. Brand Principles Summary
+## 22. Sign-In Experience
+
+> New in v1.1.
+
+**Primary Principle:** the sign-in screen is the first handshake between the owner and their hangar. It should feel like an invitation into a home, not a login gate.
+
+**Design Direction:**
+
+- Full-bleed hero moment: aircraft or hangar imagery filling the screen, with Aviation Blue as the anchor tone rather than a plain white form.
+- Brand mark and tagline ("Your aircraft. Your story. Your home.") presented over the image — not just a logo centered on white.
+- Sign-in options read as an invitation, not a form: "Continue with Apple" and "Continue with Google" as solid white pill buttons floating over the hero image.
+- A warm line for new owners — "New here? Create your hangar." — given equal visual weight to the sign-in buttons, not buried below legal text.
+
+**Avoid:** plain white background with a centered logo and two gray outline buttons; leading with Terms of Service / Privacy Policy as the most visible secondary content; generic OAuth-button styling with no aviation warmth or brand presence.
+
+---
+
+## 23. Brand Principles Summary
 
 Digital Hangar should always feel:
 

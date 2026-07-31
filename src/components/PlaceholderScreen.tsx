@@ -29,7 +29,7 @@ export function PlaceholderScreen({ title, message, symbol, symbolFallback }: Pr
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,

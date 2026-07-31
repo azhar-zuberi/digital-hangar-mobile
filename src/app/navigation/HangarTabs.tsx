@@ -22,15 +22,15 @@ export function HangarTabs() {
     <Tab.Navigator
       screenOptions={{
         headerLeft: () => <HomeHeaderButton />,
-        headerStyle: { backgroundColor: colors.ivory },
+        headerStyle: { backgroundColor: colors.cloudWhite },
         headerShadowVisible: false,
         headerTitleStyle: {
           color: colors.graphite,
           fontSize: typography.title2.size,
           fontWeight: typography.title2.weight,
         },
-        tabBarStyle: { backgroundColor: colors.ivory, borderTopColor: colors.aluminum },
-        tabBarActiveTintColor: colors.brass,
+        tabBarStyle: { backgroundColor: colors.cloudWhite, borderTopColor: colors.graphite12 },
+        tabBarActiveTintColor: colors.aviationBlue,
         tabBarInactiveTintColor: colors.graphite60,
         tabBarLabelStyle: { fontSize: typography.caption.size },
       }}

@@ -92,10 +92,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.control,
   },
   badgeDefault: {
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   badgeHighlight: {
-    backgroundColor: colors.brass,
+    backgroundColor: colors.skyBlue,
   },
   badgeText: {
     fontSize: typography.caption.size,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     color: colors.graphite,
   },
   badgeTextHighlight: {
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
   textColumn: {
     flex: 1,
@@ -123,12 +123,12 @@ const styles = StyleSheet.create({
     width: THUMBNAIL_SIZE,
     height: THUMBNAIL_SIZE,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   thumbnailFallback: {
     width: THUMBNAIL_SIZE,
     height: THUMBNAIL_SIZE,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
 });

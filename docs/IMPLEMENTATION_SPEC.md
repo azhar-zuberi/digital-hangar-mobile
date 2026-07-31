@@ -270,16 +270,18 @@ Display name, profile photo, sign out, notification preferences, aircraft visibi
 
 ## 3. Design Tokens
 
-Proposed starting values — flag these for visual design validation before locking, but concrete enough to build against rather than leaving "warm ivory" and "brass" undefined.
+Concrete values per `docs/brand-design-direction.md` v1.1 §14 (Aviation Blue / Sky Blue / Cloud White / Graphite), which replaced the v1.0 Warm Ivory / Aviation Brass / Aircraft Aluminum palette this table originally proposed.
 
 **Color**
 | Token | Hex | Use |
 |---|---|---|
-| `ivory` | `#FAF6EE` | Primary background |
-| `graphite` | `#26272B` | Primary text |
-| `graphite-60` | `#26272B` @ 60% opacity | Secondary text |
-| `brass` | `#A8813F` | Accents, milestones, highlights |
-| `aluminum` | `#D4D6D9` | Dividers, subtle UI, disabled states |
+| `cloudWhite` | `#FFFFFF` | Primary background |
+| `graphite` | `#2C2C2A` | Primary text |
+| `graphite-60` | `#2C2C2A` @ 60% opacity | Secondary text |
+| `graphite-12` | `#2C2C2A` @ 12% opacity | Dividers, disabled states, placeholder fills — a supporting neutral, not one of the four brand colors (v1.1 §14 has no neutral gray) |
+| `aviationBlue` | `#042C53` | Primary CTA buttons, nav accents, sign-in/onboarding — identity moments and calls to action |
+| `skyBlue` | `#185FA5` | In-content active/selected states, links, tags and highlights (e.g. milestone markers) |
+| `error` | `#C0392B` | Form validation/error states — functional only, not a brand accent |
 
 **Typography** (SF Pro, iOS system font)
 | Token | Size / Weight | Use |

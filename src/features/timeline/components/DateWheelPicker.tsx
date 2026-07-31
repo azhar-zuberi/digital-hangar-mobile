@@ -179,9 +179,9 @@ const styles = StyleSheet.create({
   columnScroll: {
     height: ROW_HEIGHT * VISIBLE_ROWS,
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     borderRadius: radii.control,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   row: {
     height: ROW_HEIGHT,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   rowSelected: {
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   rowText: {
     fontSize: typography.body.size,
