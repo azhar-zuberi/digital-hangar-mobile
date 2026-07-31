@@ -88,7 +88,12 @@ export function TimelinePhotoPicker({ photoUris, onChange }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Move photo ${index + 1} earlier`}
                 >
-                  <IconSymbol name="chevron.left" size={14} color={colors.cloudWhite} fallback="‹" />
+                  <IconSymbol
+                    name="chevron.left"
+                    size={14}
+                    color={colors.cloudWhite}
+                    fallback="‹"
+                  />
                 </Pressable>
                 <Pressable
                   onPress={() => removeAt(index)}
@@ -108,7 +113,12 @@ export function TimelinePhotoPicker({ photoUris, onChange }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Move photo ${index + 1} later`}
                 >
-                  <IconSymbol name="chevron.right" size={14} color={colors.cloudWhite} fallback="›" />
+                  <IconSymbol
+                    name="chevron.right"
+                    size={14}
+                    color={colors.cloudWhite}
+                    fallback="›"
+                  />
                 </Pressable>
               </View>
             </View>

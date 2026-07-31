@@ -42,9 +42,7 @@ export function SignInScreen() {
   const [showAuthView, setShowAuthView] = useState(false);
 
   if (showAuthView) {
-    return (
-      <AuthView mode="signInOrUp" isDismissible onDismiss={() => setShowAuthView(false)} />
-    );
+    return <AuthView mode="signInOrUp" isDismissible onDismiss={() => setShowAuthView(false)} />;
   }
 
   return <SignInHero onContinue={() => setShowAuthView(true)} />;
