@@ -307,7 +307,7 @@ export function AddAircraftScreen({ navigation }: Props) {
           accessibilityState={{ disabled: isSubmitting, busy: isSubmitting }}
         >
           {isSubmitting ? (
-            <ActivityIndicator color={colors.ivory} />
+            <ActivityIndicator color={colors.cloudWhite} />
           ) : (
             <Text style={styles.submitButtonText}>Add This Aircraft</Text>
           )}
@@ -320,7 +320,7 @@ export function AddAircraftScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   container: {
     padding: spacing.xl,
@@ -355,20 +355,20 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     borderRadius: radii.control,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     fontSize: typography.body.size,
     color: colors.graphite,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   inputError: {
-    borderColor: colors.brass,
+    borderColor: colors.error,
   },
   errorText: {
     fontSize: typography.caption.size,
-    color: colors.brass,
+    color: colors.error,
     marginTop: spacing.xs,
   },
   photoPreview: {
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     aspectRatio: 4 / 3,
     borderRadius: radii.card,
     marginBottom: spacing.md,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   photoButtons: {
     flexDirection: 'row',
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderRadius: radii.control,
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     alignItems: 'center',
   },
   secondaryButtonText: {
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radii.card,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   errorBannerText: {
     fontSize: typography.caption.size,
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   submitButton: {
-    backgroundColor: colors.brass,
+    backgroundColor: colors.aviationBlue,
     borderRadius: radii.control,
     paddingVertical: spacing.md,
     alignItems: 'center',
@@ -421,6 +421,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
 });

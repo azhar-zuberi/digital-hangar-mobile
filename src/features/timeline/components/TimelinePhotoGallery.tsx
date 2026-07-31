@@ -24,7 +24,7 @@ function GalleryPhoto({ storagePath }: { storagePath: string }) {
 
   return (
     <View style={[styles.photoContainer, { width: SCREEN_WIDTH }]}>
-      {isLoading && !url && <ActivityIndicator color={colors.brass} />}
+      {isLoading && !url && <ActivityIndicator color={colors.skyBlue} />}
       {url && (
         <Image
           source={{ uri: url }}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     aspectRatio: 4 / 3,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   photo: {
     width: '100%',
@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   dotActive: {
-    backgroundColor: colors.brass,
+    backgroundColor: colors.skyBlue,
   },
 });

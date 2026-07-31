@@ -68,7 +68,7 @@ function RootGate() {
   if (!isLoaded) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -86,7 +86,7 @@ function RootGate() {
   if (ensureProfile.isPending) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -97,7 +97,7 @@ function RootGate() {
 const styles = StyleSheet.create({
   loading: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
   },

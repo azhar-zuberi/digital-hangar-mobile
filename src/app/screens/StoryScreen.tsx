@@ -80,7 +80,7 @@ export function StoryScreen({ navigation, route }: Props) {
   if (isLoadingAircraft || (isLoadingEntries && !isRefetching)) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -139,11 +139,11 @@ export function StoryScreen({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   list: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   centered: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
@@ -164,15 +164,15 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
     borderRadius: radii.control,
-    backgroundColor: colors.brass,
+    backgroundColor: colors.aviationBlue,
   },
   emptyButtonText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
   sectionHeader: {
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xs,

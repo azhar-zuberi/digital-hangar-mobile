@@ -55,7 +55,7 @@ export function OnboardingChoiceScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
   },
@@ -81,24 +81,24 @@ const styles = StyleSheet.create({
   primaryButton: {
     paddingVertical: spacing.md,
     borderRadius: radii.control,
-    backgroundColor: colors.brass,
+    backgroundColor: colors.aviationBlue,
     alignItems: 'center',
   },
   primaryButtonText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
   secondaryButton: {
     paddingVertical: spacing.md,
     borderRadius: radii.control,
     borderWidth: 1,
-    borderColor: colors.brass,
+    borderColor: colors.aviationBlue,
     alignItems: 'center',
   },
   secondaryButtonText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.brass,
+    color: colors.aviationBlue,
   },
 });

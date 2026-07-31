@@ -88,7 +88,12 @@ export function TimelinePhotoPicker({ photoUris, onChange }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Move photo ${index + 1} earlier`}
                 >
-                  <IconSymbol name="chevron.left" size={14} color={colors.ivory} fallback="‹" />
+                  <IconSymbol
+                    name="chevron.left"
+                    size={14}
+                    color={colors.cloudWhite}
+                    fallback="‹"
+                  />
                 </Pressable>
                 <Pressable
                   onPress={() => removeAt(index)}
@@ -96,7 +101,7 @@ export function TimelinePhotoPicker({ photoUris, onChange }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Remove photo ${index + 1}`}
                 >
-                  <IconSymbol name="xmark" size={14} color={colors.ivory} fallback="✕" />
+                  <IconSymbol name="xmark" size={14} color={colors.cloudWhite} fallback="✕" />
                 </Pressable>
                 <Pressable
                   onPress={() => moveBy(index, 1)}
@@ -108,7 +113,12 @@ export function TimelinePhotoPicker({ photoUris, onChange }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel={`Move photo ${index + 1} later`}
                 >
-                  <IconSymbol name="chevron.right" size={14} color={colors.ivory} fallback="›" />
+                  <IconSymbol
+                    name="chevron.right"
+                    size={14}
+                    color={colors.cloudWhite}
+                    fallback="›"
+                  />
                 </Pressable>
               </View>
             </View>
@@ -160,7 +170,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   previewControls: {
     flexDirection: 'row',
@@ -187,7 +197,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderRadius: radii.control,
     borderWidth: 1,
-    borderColor: colors.aluminum,
+    borderColor: colors.graphite12,
     alignItems: 'center',
   },
   secondaryButtonText: {
@@ -197,7 +207,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: typography.caption.size,
-    color: colors.brass,
+    color: colors.error,
     marginTop: spacing.sm,
   },
 });

@@ -68,7 +68,7 @@ export function HomeScreen({ navigation }: Props) {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -141,14 +141,14 @@ export function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   content: {
     paddingBottom: spacing.xxl,
   },
   centered: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
@@ -167,20 +167,20 @@ const styles = StyleSheet.create({
   editProfileText: {
     fontSize: typography.caption.size,
     fontWeight: '600',
-    color: colors.brass,
+    color: colors.skyBlue,
   },
   enter: {
     marginTop: spacing.xxl,
     marginHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: radii.control,
-    backgroundColor: colors.brass,
+    backgroundColor: colors.aviationBlue,
     alignItems: 'center',
   },
   enterText: {
     fontSize: typography.body.size,
     fontWeight: '600',
-    color: colors.ivory,
+    color: colors.cloudWhite,
   },
   signOut: {
     marginTop: spacing.xl,
@@ -190,6 +190,6 @@ const styles = StyleSheet.create({
   },
   signOutText: {
     fontSize: typography.caption.size,
-    color: colors.brass,
+    color: colors.skyBlue,
   },
 });

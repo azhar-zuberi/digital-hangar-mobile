@@ -26,7 +26,7 @@ export function TimelineEntryDetailScreen({ route }: Props) {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -58,14 +58,14 @@ export function TimelineEntryDetailScreen({ route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   content: {
     paddingBottom: spacing.xxxl,
   },
   centered: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     fontSize: typography.caption.size,
     fontWeight: '600',
-    color: colors.brass,
+    color: colors.skyBlue,
     marginBottom: spacing.xs,
     textTransform: 'uppercase',
   },

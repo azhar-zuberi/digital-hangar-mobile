@@ -60,7 +60,7 @@ export function TimelineEntryCard({ entry, onPress }: Props) {
     >
       {entry.type === 'milestone' && (
         <View style={styles.milestoneBadge}>
-          <IconSymbol name="star.fill" size={10} color={colors.brass} fallback="★" />
+          <IconSymbol name="star.fill" size={10} color={colors.skyBlue} fallback="★" />
         </View>
       )}
 
@@ -121,13 +121,13 @@ const styles = StyleSheet.create({
     width: THUMBNAIL_SIZE,
     height: THUMBNAIL_SIZE,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   thumbnailFallback: {
     width: THUMBNAIL_SIZE,
     height: THUMBNAIL_SIZE,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
     alignItems: 'center',
     justifyContent: 'center',
   },

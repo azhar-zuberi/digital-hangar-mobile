@@ -27,7 +27,7 @@ export function AircraftProfileScreen({ route }: Props) {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.brass} />
+        <ActivityIndicator color={colors.skyBlue} />
       </View>
     );
   }
@@ -82,11 +82,11 @@ export function AircraftProfileScreen({ route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
   },
   centered: {
     flex: 1,
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.cloudWhite,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   photoFallback: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   identity: {
     paddingHorizontal: spacing.xl,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: radii.control,
-    backgroundColor: colors.aluminum,
+    backgroundColor: colors.graphite12,
   },
   visibilityBadgeText: {
     fontSize: typography.caption.size,

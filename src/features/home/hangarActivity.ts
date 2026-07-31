@@ -11,12 +11,12 @@ export type HangarActivityKind = 'timeline' | 'squawk' | 'flight';
 
 /**
  * Two-tone badge system rather than one color per content type, since
- * IMPLEMENTATION_SPEC.md §3's design tokens only define `brass` as an
- * accent color (everything else is text/background/divider). 'highlight'
- * (brass) marks the entries that most want attention — milestones today;
- * likely open squawks once Phase 3 lands — 'default' (aluminum) is
- * everything else. Revisit if/when squawk/flight badges get their own
- * validated colors.
+ * IMPLEMENTATION_SPEC.md §3's design tokens only define `skyBlue` as an
+ * interactive accent (everything else is text/background/divider).
+ * 'highlight' (skyBlue) marks the entries that most want attention —
+ * milestones today; likely open squawks once Phase 3 lands — 'default'
+ * (graphite12) is everything else. Revisit if/when squawk/flight badges get
+ * their own validated colors.
  */
 export type HangarActivityBadgeVariant = 'default' | 'highlight';
 
